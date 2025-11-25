@@ -193,7 +193,10 @@ QPay QR code flow:
 - Use DRY Principle, KISS principle, and Separation of Concerns on every code file
 - Implement Barrel Exports for Better Import Organization
 
-<!-- ### Database structure
+### Database structure
 
 - Read the `/supabase/migrations/*` to understand the current database structure and what function we could use in the frontend, if it's not usable, then think about is the function need to implemented in supabase's function or trigger, the commented ones are not yet implemented one
-- Read the `/supabase/seeds/*` to understand the current data content -->
+
+### Added memories
+- the database schema in /kiosk_project_spec.md is not defined yet, it can be changed when developing
+- think twice when adding any policy in supabase database
