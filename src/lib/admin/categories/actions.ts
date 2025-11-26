@@ -5,27 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "@/lib/auth/actions";
 import { categorySchema, type CategoryInput } from "./schemas";
 import type { Category } from "./types";
-
-type ActionResult<T> =
-  | { success: true; data: T }
-  | { success: false; error: string };
-
-const verifyAuthOrThrow = async () => {
-  const user = await getCurrentUser();
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
-
-  if (user.role !== "ADMIN" && user.role !== "STAFF") {
-    throw new Error("Insufficient permissions");
-  }
-
-  return { user, tenantId: user.tenant_id };
-};
-
-const handleError = (error: unknown, defaultMessage: string): string => {
-  return error instanceof Error ? error.message : defaultMessage;
-};
+import { verifyAuthOrThrow, handleError, type ActionResult } from "@/lib/admin/utils";
 
 export const getCategories = async (): Promise<ActionResult<Category[]>> => {
   try {

@@ -1,21 +1,32 @@
-export default function ProductsPage() {
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth/actions";
+import { getProducts } from "@/lib/admin/products/actions";
+import { getCategories } from "@/lib/admin/categories/actions";
+import { ProductsTable } from "@/components/admin/products/ProductsTable";
+
+export default async function ProductsPage() {
+  const user = await getCurrentUser();
+  if (!user) redirect("/login");
+
+  const [productsResult, categoriesResult] = await Promise.all([
+    getProducts(),
+    getCategories(),
+  ]);
+
+  if (!productsResult.success) {
+    return <div>Error: {productsResult.error}</div>;
+  }
+
+  if (!categoriesResult.success) {
+    return <div>Error: {categoriesResult.error}</div>;
+  }
+
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Products</h1>
-        <p className="text-muted-foreground">
-          Manage your menu items and pricing
-        </p>
-      </div>
-
-      <div className="flex min-h-[400px] items-center justify-center rounded-lg border border-dashed">
-        <div className="text-center">
-          <h3 className="text-lg font-semibold">Coming Soon</h3>
-          <p className="text-sm text-muted-foreground">
-            Product management will be available soon
-          </p>
-        </div>
-      </div>
+      <ProductsTable
+        products={productsResult.data}
+        categories={categoriesResult.data}
+      />
     </div>
   );
 }

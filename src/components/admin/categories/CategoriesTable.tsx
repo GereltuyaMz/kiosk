@@ -13,10 +13,11 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { EmptyCategories } from "./EmptyCategories";
+import { EmptyState } from "@/components/common/EmptyState";
+import { DeleteItemDialog } from "@/components/common/DeleteItemDialog";
 import { CategoryDialog } from "./CategoryDialog";
-import { DeleteCategoryDialog } from "./DeleteCategoryDialog";
-import { toggleCategoryStatus } from "@/lib/admin/categories/actions";
+import { toggleCategoryStatus, deleteCategory } from "@/lib/admin/categories/actions";
+import { Folder } from "lucide-react";
 import type { Category } from "@/lib/admin/categories/types";
 
 type CategoriesTableProps = {
@@ -75,7 +76,13 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
   if (categories.length === 0) {
     return (
       <>
-        <EmptyCategories onCreateClick={handleCreateClick} />
+        <EmptyState
+          icon={Folder}
+          title="No categories yet"
+          description="Get started by creating your first category for your menu."
+          buttonText="Create First Category"
+          onButtonClick={handleCreateClick}
+        />
         <CategoryDialog
           open={categoryDialogOpen}
           onOpenChange={setCategoryDialogOpen}
@@ -188,11 +195,18 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
       />
 
       {selectedCategory && (
-        <DeleteCategoryDialog
+        <DeleteItemDialog
           open={deleteDialogOpen}
           onOpenChange={setDeleteDialogOpen}
-          category={selectedCategory}
-          onSuccess={handleSuccess}
+          itemName={selectedCategory.name}
+          entityType="Category"
+          onDelete={async () => {
+            const result = await deleteCategory(selectedCategory.id);
+            if (!result.success) {
+              throw new Error(result.error);
+            }
+            handleSuccess();
+          }}
         />
       )}
     </>
