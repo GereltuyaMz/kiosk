@@ -1,5 +1,8 @@
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth/actions";
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
+import { Sidebar } from "@/components/admin/Sidebar";
+import { Header } from "@/components/admin/Header";
 
 export default async function AdminLayout({
   children,
@@ -16,5 +19,15 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  return <div className="min-h-screen bg-neutral-50">{children}</div>;
+  return (
+    <SidebarProvider>
+      <Sidebar />
+      <SidebarInset>
+        <Header />
+        <main className="flex flex-1 flex-col bg-gray-50 p-6">
+          {children}
+        </main>
+      </SidebarInset>
+    </SidebarProvider>
+  );
 }
