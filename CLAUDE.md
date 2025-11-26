@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Project Progress**: See [PROGRESS.md](./PROGRESS.md) for current development stage, completed features, and upcoming milestones.
+
 ## Project Overview
 
 This is a multi-tenant kiosk platform for restaurants, cafés, bars, and fast food businesses. The system consists of three main interfaces running on the same Next.js application:
@@ -18,7 +20,7 @@ The system uses **login-based authentication** to identify tenants (no device pa
 - **React 19** with React 19 DOM
 - **Supabase** - Authentication, Database (PostgreSQL), Storage, Realtime subscriptions
 - **Tailwind CSS 4** with `@tailwindcss/postcss`
-- **Shadcn UI** (New York style) - Pre-built component library
+- **Shadcn UI**
 - **Radix UI** - Accessible UI primitives
 - **React Hook Form** + **Zod** - Form validation
 - **QPay** - Payment provider integration
@@ -193,7 +195,7 @@ QPay QR code flow:
 - Use DRY Principle, KISS principle, and Separation of Concerns on every code file
 - Implement Barrel Exports for Better Import Organization
 
-### Database structure
+### Database schema
 
 - Read the `/supabase/migrations/*` to understand the current database structure and what function we could use in the frontend, if it's not usable, then think about is the function need to implemented in supabase's function or trigger, the commented ones are not yet implemented one
 

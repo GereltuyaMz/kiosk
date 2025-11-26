@@ -36,22 +36,22 @@ export const Header = () => {
                 <Home className="h-4 w-4" />
               </BreadcrumbPage>
             ) : (
-              <>
-                <BreadcrumbLink asChild>
-                  <Link href="/admin">
-                    <Home className="h-4 w-4" />
-                  </Link>
-                </BreadcrumbLink>
-                <BreadcrumbSeparator />
-              </>
+              <BreadcrumbLink asChild>
+                <Link href="/admin">
+                  <Home className="h-4 w-4" />
+                </Link>
+              </BreadcrumbLink>
             )}
           </BreadcrumbItem>
           {!isHome && (
-            <BreadcrumbItem>
-              <BreadcrumbPage className="text-blue-600">
-                {pageTitle}
-              </BreadcrumbPage>
-            </BreadcrumbItem>
+            <>
+              <BreadcrumbSeparator />
+              <BreadcrumbItem>
+                <BreadcrumbPage className="text-blue-600">
+                  {pageTitle}
+                </BreadcrumbPage>
+              </BreadcrumbItem>
+            </>
           )}
         </BreadcrumbList>
       </Breadcrumb>
