@@ -23,6 +23,7 @@ import {
 import { createProduct, updateProduct } from "@/lib/admin/products/actions";
 import type { Product } from "@/lib/admin/products/types";
 import type { Category } from "@/lib/admin/categories/types";
+import { ImageUpload } from "@/components/common/ImageUpload";
 
 type ProductDialogProps = {
   open: boolean;
@@ -48,6 +49,7 @@ export const ProductDialog = ({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<ProductInput>({
     resolver: zodResolver(productSchema),
@@ -57,6 +59,7 @@ export const ProductDialog = ({
       category_id: "",
       base_price: 0,
       display_order: undefined,
+      image_url: null,
     },
   });
 
@@ -69,6 +72,7 @@ export const ProductDialog = ({
         category_id: product.category_id || "",
         base_price: price,
         display_order: product.display_order ?? undefined,
+        image_url: product.image_url || null,
       });
       setPriceDisplay(formatPriceForInput(price));
     } else {
@@ -78,6 +82,7 @@ export const ProductDialog = ({
         category_id: "",
         base_price: 0,
         display_order: undefined,
+        image_url: null,
       });
       setPriceDisplay("");
     }
@@ -168,6 +173,17 @@ export const ProductDialog = ({
                 {errors.description.message}
               </p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <ImageUpload
+              value={watch("image_url")}
+              onChange={(url) => setValue("image_url", url)}
+              bucket="product-images"
+              disabled={isSubmitting}
+              label="Product Image (Optional)"
+              error={errors.image_url?.message}
+            />
           </div>
 
           <div className="space-y-2">

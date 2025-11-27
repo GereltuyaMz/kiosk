@@ -22,6 +22,7 @@ import {
 } from "@/lib/admin/categories/schemas";
 import { createCategory, updateCategory } from "@/lib/admin/categories/actions";
 import type { Category } from "@/lib/admin/categories/types";
+import { ImageUpload } from "@/components/common/ImageUpload";
 
 type CategoryDialogProps = {
   open: boolean;
@@ -43,6 +44,8 @@ export const CategoryDialog = ({
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     formState: { errors },
   } = useForm<CategoryInput>({
     resolver: zodResolver(categorySchema),
@@ -50,6 +53,7 @@ export const CategoryDialog = ({
       name: "",
       description: "",
       display_order: 1,
+      image_url: null,
     },
   });
 
@@ -59,12 +63,14 @@ export const CategoryDialog = ({
         name: category.name,
         description: category.description || "",
         display_order: category.display_order,
+        image_url: category.image_url || null,
       });
     } else {
       reset({
         name: "",
         description: "",
         display_order: 0,
+        image_url: null,
       });
     }
   }, [category, reset]);
@@ -138,6 +144,17 @@ export const CategoryDialog = ({
                 {errors.description.message}
               </p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <ImageUpload
+              value={watch("image_url")}
+              onChange={(url) => setValue("image_url", url)}
+              bucket="category-images"
+              disabled={isSubmitting}
+              label="Category Image (Optional)"
+              error={errors.image_url?.message}
+            />
           </div>
 
           <div className="space-y-2">

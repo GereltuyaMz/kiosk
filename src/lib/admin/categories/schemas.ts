@@ -16,6 +16,7 @@ export const categorySchema = z.object({
     .number()
     .int("Display order must be an integer")
     .min(1, "Display order must be 1 or greater"),
+  image_url: z.string().url().optional().nullable(),
 });
 
 export type CategoryInput = z.infer<typeof categorySchema>;

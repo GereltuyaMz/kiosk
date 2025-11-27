@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { productSchema, type ProductInput } from "./schemas";
 import type { Product } from "./types";
 import { verifyAuthOrThrow, handleError, type ActionResult } from "@/lib/admin/utils";
+import { deleteProductImage } from "@/lib/storage/actions";
 
 export const getProducts = async (): Promise<ActionResult<Product[]>> => {
   try {
@@ -58,7 +59,7 @@ export const createProduct = async (input: ProductInput): Promise<ActionResult<P
         description: validatedData.description || null,
         base_price: validatedData.base_price,
         display_order: validatedData.display_order ?? null,
-        image_url: null,
+        image_url: validatedData.image_url || null,
       })
       .select()
       .single();
@@ -104,6 +105,7 @@ export const updateProduct = async (
         description: validatedData.description || null,
         base_price: validatedData.base_price,
         display_order: validatedData.display_order ?? null,
+        image_url: validatedData.image_url || null,
       })
       .eq("id", id)
       .eq("tenant_id", tenantId)
@@ -124,6 +126,13 @@ export const deleteProduct = async (id: string): Promise<ActionResult<null>> => 
     const { tenantId } = await verifyAuthOrThrow();
     const supabase = await createClient();
 
+    const { data: product } = await supabase
+      .from("products")
+      .select("image_url")
+      .eq("id", id)
+      .eq("tenant_id", tenantId)
+      .single();
+
     const { error } = await supabase
       .from("products")
       .delete()
@@ -131,6 +140,10 @@ export const deleteProduct = async (id: string): Promise<ActionResult<null>> => 
       .eq("tenant_id", tenantId);
 
     if (error) throw new Error("Failed to delete product");
+
+    if (product?.image_url) {
+      await deleteProductImage(product.image_url);
+    }
 
     revalidatePath("/admin/products");
     return { success: true, data: null };

@@ -1,6 +1,6 @@
 # Project Progress
 
-Last Updated: 2025-11-26
+Last Updated: 2025-11-27
 
 ## Current Stage: Week 1 - Admin Panel Foundation
 
@@ -18,11 +18,13 @@ Last Updated: 2025-11-26
 - Sidebar with user profile section
 - Basic admin dashboard page
 
+#### Menu Management
+- Categories management (create, read, update, delete)
+- Products management (create, read, update, delete)
+
 ### 🚧 In Progress
 
 #### Week 1 Goals
-- Categories management (create, read, update, delete)
-- Products management (create, read, update, delete)
 - Variants management (size, type options)
 - Add-ons management (extra items)
 - Modifiers management (customization options)

@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, ImageIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -56,6 +56,7 @@ export const ProductsTableView = ({
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-20">Image</TableHead>
               <TableHead>Name</TableHead>
               <TableHead className="hidden md:table-cell">Category</TableHead>
               <TableHead>Price</TableHead>
@@ -70,6 +71,19 @@ export const ProductsTableView = ({
                 key={product.id}
                 className={!product.is_active ? "text-muted-foreground" : ""}
               >
+                <TableCell>
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                  ) : (
+                    <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
+                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                  )}
+                </TableCell>
                 <TableCell className="font-medium">{product.name}</TableCell>
                 <TableCell className="hidden md:table-cell">
                   {getCategoryName(product.category_id || "")}

@@ -11,6 +11,7 @@ export const productSchema = z.object({
     .min(1, "Display order must be 1 or greater")
     .optional()
     .nullable(),
+  image_url: z.string().url().optional().nullable(),
 });
 
 export type ProductInput = z.infer<typeof productSchema>;

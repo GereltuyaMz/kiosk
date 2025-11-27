@@ -6,6 +6,7 @@ import { getCurrentUser } from "@/lib/auth/actions";
 import { categorySchema, type CategoryInput } from "./schemas";
 import type { Category } from "./types";
 import { verifyAuthOrThrow, handleError, type ActionResult } from "@/lib/admin/utils";
+import { deleteCategoryImage } from "@/lib/storage/actions";
 
 export const getCategories = async (): Promise<ActionResult<Category[]>> => {
   try {
@@ -68,6 +69,7 @@ export const createCategory = async (
         name: validatedData.name,
         description: validatedData.description || null,
         display_order: validatedData.display_order,
+        image_url: validatedData.image_url || null,
       })
       .select()
       .single();
@@ -117,6 +119,7 @@ export const updateCategory = async (
         name: validatedData.name,
         description: validatedData.description || null,
         display_order: validatedData.display_order,
+        image_url: validatedData.image_url || null,
       })
       .eq("id", id)
       .eq("tenant_id", tenantId)
@@ -144,6 +147,13 @@ export const deleteCategory = async (
     const { tenantId } = await verifyAuthOrThrow();
     const supabase = await createClient();
 
+    const { data: category } = await supabase
+      .from("categories")
+      .select("image_url")
+      .eq("id", id)
+      .eq("tenant_id", tenantId)
+      .single();
+
     const { error } = await supabase
       .from("categories")
       .delete()
@@ -152,6 +162,10 @@ export const deleteCategory = async (
 
     if (error) {
       throw new Error("Failed to delete category");
+    }
+
+    if (category?.image_url) {
+      await deleteCategoryImage(category.image_url);
     }
 
     revalidatePath("/admin/categories");

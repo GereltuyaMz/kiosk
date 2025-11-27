@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Pencil, Trash2, Eye, EyeOff } from "lucide-react";
+import { Pencil, Trash2, Eye, EyeOff, ImageIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   Table,
@@ -112,6 +112,7 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="w-20">Image</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead className="hidden md:table-cell">
                   Description
@@ -127,6 +128,19 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
                   key={category.id}
                   className={!category.is_active ? "text-muted-foreground" : ""}
                 >
+                  <TableCell>
+                    {category.image_url ? (
+                      <img
+                        src={category.image_url}
+                        alt={category.name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell className="font-medium">{category.name}</TableCell>
                   <TableCell className="hidden md:table-cell">
                     {category.description || "-"}
