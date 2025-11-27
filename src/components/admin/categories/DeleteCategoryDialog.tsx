@@ -1,6 +1,6 @@
 "use client";
 
-import { DeleteItemDialog } from "@/components/common/DeleteItemDialog";
+import { DeleteItemDialog } from "@/components/common";
 import { deleteCategory } from "@/lib/admin/categories/actions";
 import type { Category } from "@/lib/admin/categories/types";
 

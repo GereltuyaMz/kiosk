@@ -20,11 +20,14 @@ Last Updated: 2025-11-27
 
 #### Menu Management
 - Categories management (create, read, update, delete)
+  - Search and filter functionality (by name, status)
 - Products management (create, read, update, delete)
 
 ### 🚧 In Progress
 
 #### Week 1 Goals
+- Search and filter functionality (by name, category, status)
+- Product detail page and shadcn sheet component to show the info
 - Variants management (size, type options)
 - Add-ons management (extra items)
 - Modifiers management (customization options)

@@ -14,8 +14,13 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import {
+  FormField,
+  CategorySelect,
+  PriceInput,
+  ImageUpload,
+} from "@/components/common";
 import {
   productSchema,
   type ProductInput,
@@ -23,7 +28,6 @@ import {
 import { createProduct, updateProduct } from "@/lib/admin/products/actions";
 import type { Product } from "@/lib/admin/products/types";
 import type { Category } from "@/lib/admin/categories/types";
-import { ImageUpload } from "@/components/common/ImageUpload";
 
 type ProductDialogProps = {
   open: boolean;
@@ -41,7 +45,6 @@ export const ProductDialog = ({
   onSuccess,
 }: ProductDialogProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [priceDisplay, setPriceDisplay] = useState("");
   const isEdit = Boolean(product);
 
   const {
@@ -65,16 +68,14 @@ export const ProductDialog = ({
 
   useEffect(() => {
     if (product) {
-      const price = Number(product.base_price);
       reset({
         name: product.name,
         description: product.description || "",
         category_id: product.category_id || "",
-        base_price: price,
+        base_price: Number(product.base_price),
         display_order: product.display_order ?? undefined,
         image_url: product.image_url || null,
       });
-      setPriceDisplay(formatPriceForInput(price));
     } else {
       reset({
         name: "",
@@ -84,23 +85,8 @@ export const ProductDialog = ({
         display_order: undefined,
         image_url: null,
       });
-      setPriceDisplay("");
     }
   }, [product, reset]);
-
-  const formatPriceForInput = (value: number): string => {
-    if (!value && value !== 0) return "";
-    return value.toLocaleString("en-US");
-  };
-
-  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const rawValue = e.target.value.replace(/,/g, "");
-
-    if (rawValue === "" || /^\d*\.?\d*$/.test(rawValue)) {
-      setPriceDisplay(rawValue ? parseFloat(rawValue).toLocaleString("en-US") : "");
-      setValue("base_price", parseFloat(rawValue) || 0);
-    }
-  };
 
   const onSubmit = async (data: ProductInput) => {
     setIsSubmitting(true);
@@ -123,7 +109,7 @@ export const ProductDialog = ({
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
@@ -147,20 +133,19 @@ export const ProductDialog = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+          <FormField label="Name" htmlFor="name" error={errors.name?.message}>
             <Input
               id="name"
               placeholder="e.g., Cheeseburger"
               {...register("name")}
             />
-            {errors.name && (
-              <p className="text-sm text-red-600">{errors.name.message}</p>
-            )}
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+          <FormField
+            label="Description (Optional)"
+            htmlFor="description"
+            error={errors.description?.message}
+          >
             <Textarea
               id="description"
               placeholder="Describe this product..."
@@ -168,63 +153,48 @@ export const ProductDialog = ({
               rows={3}
               {...register("description")}
             />
-            {errors.description && (
-              <p className="text-sm text-red-600">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <ImageUpload
-              value={watch("image_url")}
-              onChange={(url) => setValue("image_url", url)}
-              bucket="product-images"
-              disabled={isSubmitting}
-              label="Product Image (Optional)"
-              error={errors.image_url?.message}
-            />
-          </div>
+          <ImageUpload
+            value={watch("image_url")}
+            onChange={(url) => setValue("image_url", url)}
+            bucket="product-images"
+            disabled={isSubmitting}
+            label="Product Image (Optional)"
+            error={errors.image_url?.message}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="category_id">Category</Label>
-            <select
+          <FormField
+            label="Category"
+            htmlFor="category_id"
+            error={errors.category_id?.message}
+          >
+            <CategorySelect
               id="category_id"
+              categories={activeCategories}
               {...register("category_id")}
-              className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              <option value="">Select a category</option>
-              {activeCategories.map((category) => (
-                <option key={category.id} value={category.id}>
-                  {category.name}
-                </option>
-              ))}
-            </select>
-            {errors.category_id && (
-              <p className="text-sm text-red-600">
-                {errors.category_id.message}
-              </p>
-            )}
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="base_price">Base Price</Label>
-            <Input
-              id="base_price"
-              type="text"
-              placeholder="0"
-              value={priceDisplay}
-              onChange={handlePriceChange}
             />
-            {errors.base_price && (
-              <p className="text-sm text-red-600">
-                {errors.base_price.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <Label htmlFor="display_order">Display Order (Optional)</Label>
+          <FormField
+            label="Base Price"
+            htmlFor="base_price"
+            error={errors.base_price?.message}
+          >
+            <PriceInput
+              id="base_price"
+              value={watch("base_price")}
+              onChange={(value) => setValue("base_price", value)}
+              disabled={isSubmitting}
+            />
+          </FormField>
+
+          <FormField
+            label="Display Order (Optional)"
+            htmlFor="display_order"
+            error={errors.display_order?.message}
+            hint="Leave blank to sort by creation date"
+          >
             <Input
               id="display_order"
               type="number"
@@ -238,18 +208,10 @@ export const ProductDialog = ({
                   }
                   const num = Number(value);
                   return isNaN(num) ? undefined : num;
-                }
+                },
               })}
             />
-            <p className="text-xs text-muted-foreground">
-              Leave blank to sort by creation date
-            </p>
-            {errors.display_order && (
-              <p className="text-sm text-red-600">
-                {errors.display_order.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           <DialogFooter>
             <Button

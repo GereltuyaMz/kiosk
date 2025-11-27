@@ -14,15 +14,14 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { FormField, ImageUpload } from "@/components/common";
 import {
   categorySchema,
   type CategoryInput,
 } from "@/lib/admin/categories/schemas";
 import { createCategory, updateCategory } from "@/lib/admin/categories/actions";
 import type { Category } from "@/lib/admin/categories/types";
-import { ImageUpload } from "@/components/common/ImageUpload";
 
 type CategoryDialogProps = {
   open: boolean;
@@ -96,7 +95,7 @@ export const CategoryDialog = ({
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
@@ -118,20 +117,19 @@ export const CategoryDialog = ({
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+          <FormField label="Name" htmlFor="name" error={errors.name?.message}>
             <Input
               id="name"
               placeholder="e.g., Appetizers"
               {...register("name")}
             />
-            {errors.name && (
-              <p className="text-sm text-red-600">{errors.name.message}</p>
-            )}
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <Label htmlFor="description">Description (Optional)</Label>
+          <FormField
+            label="Description (Optional)"
+            htmlFor="description"
+            error={errors.description?.message}
+          >
             <Textarea
               id="description"
               placeholder="Describe this category..."
@@ -139,26 +137,22 @@ export const CategoryDialog = ({
               rows={3}
               {...register("description")}
             />
-            {errors.description && (
-              <p className="text-sm text-red-600">
-                {errors.description.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
-          <div className="space-y-2">
-            <ImageUpload
-              value={watch("image_url")}
-              onChange={(url) => setValue("image_url", url)}
-              bucket="category-images"
-              disabled={isSubmitting}
-              label="Category Image (Optional)"
-              error={errors.image_url?.message}
-            />
-          </div>
+          <ImageUpload
+            value={watch("image_url")}
+            onChange={(url) => setValue("image_url", url)}
+            bucket="category-images"
+            disabled={isSubmitting}
+            label="Category Image (Optional)"
+            error={errors.image_url?.message}
+          />
 
-          <div className="space-y-2">
-            <Label htmlFor="display_order">Display Order</Label>
+          <FormField
+            label="Display Order"
+            htmlFor="display_order"
+            error={errors.display_order?.message}
+          >
             <Input
               id="display_order"
               type="number"
@@ -167,12 +161,7 @@ export const CategoryDialog = ({
               placeholder="1"
               {...register("display_order", { valueAsNumber: true })}
             />
-            {errors.display_order && (
-              <p className="text-sm text-red-600">
-                {errors.display_order.message}
-              </p>
-            )}
-          </div>
+          </FormField>
 
           <DialogFooter>
             <Button

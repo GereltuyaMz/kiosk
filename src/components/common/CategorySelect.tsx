@@ -1,0 +1,31 @@
+import { forwardRef } from "react";
+import type { Category } from "@/lib/admin/categories/types";
+
+type CategorySelectProps = {
+  categories: Category[];
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  name?: string;
+  id?: string;
+};
+
+export const CategorySelect = forwardRef<HTMLSelectElement, CategorySelectProps>(
+  ({ categories, ...props }, ref) => {
+    return (
+      <select
+        ref={ref}
+        {...props}
+        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+      >
+        <option value="">Select a category</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>
+            {category.name}
+          </option>
+        ))}
+      </select>
+    );
+  }
+);
+
+CategorySelect.displayName = "CategorySelect";

@@ -1,23 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { Pencil, Trash2, Eye, EyeOff, ImageIcon } from "lucide-react";
-import { toast } from "sonner";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { EmptyState } from "@/components/common/EmptyState";
-import { DeleteItemDialog } from "@/components/common/DeleteItemDialog";
-import { CategoryDialog } from "./CategoryDialog";
-import { toggleCategoryStatus, deleteCategory } from "@/lib/admin/categories/actions";
+import { useState, useMemo } from "react";
 import { Folder } from "lucide-react";
+import { toast } from "sonner";
+import { EmptyState, DeleteItemDialog } from "@/components/common";
+import { CategoryDialog } from "./CategoryDialog";
+import { CategoriesTableView } from "./CategoriesTableView";
+import { toggleCategoryStatus, deleteCategory } from "@/lib/admin/categories/actions";
 import type { Category } from "@/lib/admin/categories/types";
 
 type CategoriesTableProps = {
@@ -31,6 +20,23 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
     Category | undefined
   >();
   const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+
+  const filteredCategories = useMemo(() => {
+    return categories.filter((category) => {
+      const matchesSearch = searchQuery === "" ||
+        category.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (category.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+
+      const matchesStatus =
+        statusFilter === "all" ||
+        (statusFilter === "active" && category.is_active) ||
+        (statusFilter === "inactive" && !category.is_active);
+
+      return matchesSearch && matchesStatus;
+    });
+  }, [categories, searchQuery, statusFilter]);
 
   const handleCreateClick = () => {
     setSelectedCategory(undefined);
@@ -62,7 +68,7 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
       } else {
         toast.error(result.error);
       }
-    } catch (error) {
+    } catch {
       toast.error("An unexpected error occurred");
     } finally {
       setTogglingId(null);
@@ -95,111 +101,18 @@ export const CategoriesTable = ({ categories }: CategoriesTableProps) => {
 
   return (
     <>
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold">Categories</h2>
-            <p className="text-sm text-muted-foreground">
-              Manage your menu categories
-            </p>
-          </div>
-          <Button onClick={handleCreateClick} className="cursor-pointer">
-            Add Category
-          </Button>
-        </div>
-
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead className="w-20">Image</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="hidden md:table-cell">
-                  Description
-                </TableHead>
-                <TableHead className="w-32">Display Order</TableHead>
-                <TableHead className="w-24">Status</TableHead>
-                <TableHead className="w-40 text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {categories.map((category) => (
-                <TableRow
-                  key={category.id}
-                  className={!category.is_active ? "text-muted-foreground" : ""}
-                >
-                  <TableCell>
-                    {category.image_url ? (
-                      <img
-                        src={category.image_url}
-                        alt={category.name}
-                        className="w-12 h-12 object-cover rounded"
-                      />
-                    ) : (
-                      <div className="w-12 h-12 bg-muted rounded flex items-center justify-center">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="font-medium">{category.name}</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    {category.description || "-"}
-                  </TableCell>
-                  <TableCell>{category.display_order}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant={category.is_active ? "default" : "secondary"}
-                      className={
-                        category.is_active
-                          ? "bg-green-100 text-green-800 hover:bg-green-100"
-                          : ""
-                      }
-                    >
-                      {category.is_active ? "Active" : "Inactive"}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleToggleStatus(category)}
-                        disabled={togglingId === category.id}
-                        title={category.is_active ? "Deactivate" : "Activate"}
-                        className="cursor-pointer"
-                      >
-                        {category.is_active ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleEditClick(category)}
-                        title="Edit"
-                        className="cursor-pointer"
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => handleDeleteClick(category)}
-                        title="Delete"
-                        className="text-red-600 hover:text-red-700 cursor-pointer"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </div>
-      </div>
+      <CategoriesTableView
+        categories={filteredCategories}
+        togglingId={togglingId}
+        onToggleStatus={handleToggleStatus}
+        onEdit={handleEditClick}
+        onDelete={handleDeleteClick}
+        onCreateClick={handleCreateClick}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
 
       <CategoryDialog
         open={categoryDialogOpen}
