@@ -3,6 +3,7 @@ import { getCurrentUser } from "@/lib/auth/actions";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { Sidebar } from "@/components/admin/Sidebar";
 import { Header } from "@/components/admin/Header";
+import { BreadcrumbProvider } from "@/contexts/BreadcrumbContext";
 
 export default async function AdminLayout({
   children,
@@ -20,14 +21,16 @@ export default async function AdminLayout({
   }
 
   return (
-    <SidebarProvider>
-      <Sidebar />
-      <SidebarInset>
-        <Header />
-        <main className="flex flex-1 flex-col bg-gray-50 p-6">
-          {children}
-        </main>
-      </SidebarInset>
-    </SidebarProvider>
+    <BreadcrumbProvider>
+      <SidebarProvider>
+        <Sidebar />
+        <SidebarInset>
+          <Header />
+          <main className="flex flex-1 flex-col bg-gray-50 p-6">
+            {children}
+          </main>
+        </SidebarInset>
+      </SidebarProvider>
+    </BreadcrumbProvider>
   );
 }

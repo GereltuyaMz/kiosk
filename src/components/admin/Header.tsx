@@ -11,6 +11,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useBreadcrumb } from "@/contexts/BreadcrumbContext";
 
 const getPageTitle = (pathname: string): string => {
   const segments = pathname.split("/").filter(Boolean);
@@ -23,15 +24,23 @@ const getPageTitle = (pathname: string): string => {
 
 export const Header = () => {
   const pathname = usePathname();
-  const pageTitle = getPageTitle(pathname);
+  const { items: customItems } = useBreadcrumb();
   const isHome = pathname === "/admin";
 
+  const hasCustomBreadcrumb = customItems.length > 0;
+
+  const breadcrumbItems = hasCustomBreadcrumb
+    ? customItems
+    : isHome
+    ? []
+    : [{ label: getPageTitle(pathname) }];
+
   return (
-    <header className="sticky top-0 z-10 flex h-16 items-center  bg-gray-50 px-6">
+    <header className="sticky top-0 z-10 flex h-16 items-center bg-gray-50 px-6">
       <Breadcrumb>
         <BreadcrumbList>
           <BreadcrumbItem>
-            {isHome ? (
+            {isHome && !hasCustomBreadcrumb ? (
               <BreadcrumbPage>
                 <Home className="h-4 w-4" />
               </BreadcrumbPage>
@@ -43,16 +52,22 @@ export const Header = () => {
               </BreadcrumbLink>
             )}
           </BreadcrumbItem>
-          {!isHome && (
-            <>
+          {breadcrumbItems.map((item, index) => (
+            <div key={index} className="flex items-center">
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbPage className="text-blue-600">
-                  {pageTitle}
-                </BreadcrumbPage>
+                {item.href && index < breadcrumbItems.length - 1 ? (
+                  <BreadcrumbLink asChild>
+                    <Link href={item.href}>{item.label}</Link>
+                  </BreadcrumbLink>
+                ) : (
+                  <BreadcrumbPage className={!item.href ? "text-blue-600" : ""}>
+                    {item.label}
+                  </BreadcrumbPage>
+                )}
               </BreadcrumbItem>
-            </>
-          )}
+            </div>
+          ))}
         </BreadcrumbList>
       </Breadcrumb>
     </header>

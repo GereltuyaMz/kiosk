@@ -11,7 +11,7 @@ export const productSchema = z.object({
     .min(1, "Display order must be 1 or greater")
     .optional()
     .nullable(),
-  image_url: z.string().url().optional().nullable(),
+  images: z.array(z.string().url()).max(5, "Maximum 5 images allowed").optional(),
 });
 
 export type ProductInput = z.infer<typeof productSchema>;

@@ -19,7 +19,7 @@ import {
   FormField,
   CategorySelect,
   PriceInput,
-  ImageUpload,
+  MultiImageUpload,
 } from "@/components/common";
 import {
   productSchema,
@@ -62,7 +62,7 @@ export const ProductDialog = ({
       category_id: "",
       base_price: 0,
       display_order: undefined,
-      image_url: null,
+      images: [],
     },
   });
 
@@ -74,7 +74,7 @@ export const ProductDialog = ({
         category_id: product.category_id || "",
         base_price: Number(product.base_price),
         display_order: product.display_order ?? undefined,
-        image_url: product.image_url || null,
+        images: product.images || [],
       });
     } else {
       reset({
@@ -83,7 +83,7 @@ export const ProductDialog = ({
         category_id: "",
         base_price: 0,
         display_order: undefined,
-        image_url: null,
+        images: [],
       });
     }
   }, [product, reset]);
@@ -155,13 +155,13 @@ export const ProductDialog = ({
             />
           </FormField>
 
-          <ImageUpload
-            value={watch("image_url")}
-            onChange={(url) => setValue("image_url", url)}
+          <MultiImageUpload
+            value={watch("images") || []}
+            onChange={(urls) => setValue("images", urls, { shouldDirty: true })}
             bucket="product-images"
             disabled={isSubmitting}
-            label="Product Image (Optional)"
-            error={errors.image_url?.message}
+            label="Product Images (Optional)"
+            maxImages={5}
           />
 
           <FormField

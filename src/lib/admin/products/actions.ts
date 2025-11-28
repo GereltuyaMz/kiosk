@@ -30,6 +30,31 @@ export const getProducts = async (): Promise<ActionResult<Product[]>> => {
   }
 };
 
+export const getProduct = async (id: string): Promise<ActionResult<Product>> => {
+  try {
+    const { tenantId } = await verifyAuthOrThrow();
+    const supabase = await createClient();
+
+    const { data: product, error } = await supabase
+      .from("products")
+      .select(`
+        *,
+        category:categories(id, name)
+      `)
+      .eq("id", id)
+      .eq("tenant_id", tenantId)
+      .single();
+
+    if (error || !product) {
+      return { success: false, error: "Product not found" };
+    }
+
+    return { success: true, data: product };
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to fetch product") };
+  }
+};
+
 export const createProduct = async (input: ProductInput): Promise<ActionResult<Product>> => {
   try {
     const { tenantId } = await verifyAuthOrThrow();
@@ -59,7 +84,7 @@ export const createProduct = async (input: ProductInput): Promise<ActionResult<P
         description: validatedData.description || null,
         base_price: validatedData.base_price,
         display_order: validatedData.display_order ?? null,
-        image_url: validatedData.image_url || null,
+        images: validatedData.images || [],
       })
       .select()
       .single();
@@ -105,7 +130,7 @@ export const updateProduct = async (
         description: validatedData.description || null,
         base_price: validatedData.base_price,
         display_order: validatedData.display_order ?? null,
-        image_url: validatedData.image_url || null,
+        images: validatedData.images || [],
       })
       .eq("id", id)
       .eq("tenant_id", tenantId)
@@ -128,7 +153,7 @@ export const deleteProduct = async (id: string): Promise<ActionResult<null>> => 
 
     const { data: product } = await supabase
       .from("products")
-      .select("image_url")
+      .select("images")
       .eq("id", id)
       .eq("tenant_id", tenantId)
       .single();
@@ -141,8 +166,10 @@ export const deleteProduct = async (id: string): Promise<ActionResult<null>> => 
 
     if (error) throw new Error("Failed to delete product");
 
-    if (product?.image_url) {
-      await deleteProductImage(product.image_url);
+    if (product?.images && product.images.length > 0) {
+      for (const imageUrl of product.images) {
+        await deleteProductImage(imageUrl);
+      }
     }
 
     revalidatePath("/admin/products");

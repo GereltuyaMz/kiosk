@@ -1,6 +1,6 @@
 # Project Progress
 
-Last Updated: 2025-11-27
+Last Updated: 2025-11-28
 
 ## Current Stage: Week 1 - Admin Panel Foundation
 
@@ -21,13 +21,48 @@ Last Updated: 2025-11-27
 #### Menu Management
 - Categories management (create, read, update, delete)
   - Search and filter functionality (by name, status)
+  - Image upload with Supabase storage
+  - Table view with larger image previews
+  - Status management via select dropdown (Active/Inactive)
 - Products management (create, read, update, delete)
+  - Search and filter functionality (by name, category, status)
+  - Pagination (10 items per page)
+  - Multi-image upload (up to 5 images per product)
+  - Price input with number formatting
+  - Table view with larger image previews
+  - Status management via select dropdown (Active/Inactive)
+  - Product detail page with edit-in-place functionality
+    - Breadcrumb navigation (Home → Products → Product name)
+    - Mobile-first responsive layout
+    - Side-by-side Basic Information and Product Details sections
+    - Multi-image upload and management
+    - Save button appears on form changes (isDirty state)
+    - Status toggle switch
+    - Placeholders for Variants, Add-ons, and Modifiers
+
+#### Code Quality & Refactoring
+- Component separation (Table logic vs. View components)
+- Reusable common components:
+  - FormField wrapper for consistent form layouts
+  - CategorySelect for dropdown selections
+  - PriceInput with automatic formatting
+  - TablePagination for all paginated tables
+  - ImageUpload for single image uploads
+  - MultiImageUpload for gallery-style image uploads
+- Product detail page modular structure:
+  - BasicInfoSection component (≤170 lines)
+  - ProductDetailsSection component (≤170 lines)
+  - ProductImageSection component (≤170 lines)
+  - Organized in `/detail` folder
+- Barrel exports for better import organization
+- Next.js Image optimization configured for Supabase
+- Fixed all linting warnings (unused variables, image tags)
+- TypeScript strict mode compliance
+- Database schema migration (image_url → images array)
 
 ### 🚧 In Progress
 
 #### Week 1 Goals
-- Search and filter functionality (by name, category, status)
-- Product detail page and shadcn sheet component to show the info
 - Variants management (size, type options)
 - Add-ons management (extra items)
 - Modifiers management (customization options)
@@ -57,7 +92,8 @@ Last Updated: 2025-11-27
 
 - [x] Project setup and authentication
 - [x] Admin panel structure
-- [ ] Menu management system
+- [x] Menu management system (Categories & Products CRUD)
+- [ ] Product configuration (Variants, Add-ons, Modifiers)
 - [ ] Kiosk ordering interface
 - [ ] Kitchen display system
 - [ ] Payment integration

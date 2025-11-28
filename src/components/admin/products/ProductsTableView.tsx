@@ -1,7 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Pencil, Trash2, Eye, EyeOff, ImageIcon } from "lucide-react";
+import { Pencil, Trash2, ImageIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -11,7 +12,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { TablePagination } from "@/components/common";
 import { ProductFilter } from "./ProductFilter";
 import type { Product } from "@/lib/admin/products/types";
@@ -56,6 +63,8 @@ export const ProductsTableView = ({
   onPageChange,
   totalItems,
 }: ProductsTableViewProps) => {
+  const router = useRouter();
+
   const getCategoryName = (categoryId: string) => {
     const category = categories.find((c) => c.id === categoryId);
     return category?.name || "Uncategorized";
@@ -94,7 +103,7 @@ export const ProductsTableView = ({
               <TableHead>Price</TableHead>
               <TableHead className="w-32">Display Order</TableHead>
               <TableHead className="w-24">Status</TableHead>
-              <TableHead className="w-40 text-right">Actions</TableHead>
+              <TableHead className="w-32 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -113,9 +122,9 @@ export const ProductsTableView = ({
                 className={!product.is_active ? "text-muted-foreground" : ""}
               >
                 <TableCell>
-                  {product.image_url ? (
+                  {product.images && product.images.length > 0 ? (
                     <Image
-                      src={product.image_url}
+                      src={product.images[0]}
                       alt={product.name}
                       width={80}
                       height={80}
@@ -127,7 +136,14 @@ export const ProductsTableView = ({
                     </div>
                   )}
                 </TableCell>
-                <TableCell className="font-medium">{product.name}</TableCell>
+                <TableCell className="font-medium">
+                  <button
+                    onClick={() => router.push(`/admin/products/${product.id}`)}
+                    className="text-left cursor-pointer text-blue-600 underline hover:text-blue-800 transition-colors"
+                  >
+                    {product.name}
+                  </button>
+                </TableCell>
                 <TableCell className="hidden md:table-cell">
                   {getCategoryName(product.category_id || "")}
                 </TableCell>
@@ -136,33 +152,35 @@ export const ProductsTableView = ({
                   {product.display_order ? product.display_order : "—"}
                 </TableCell>
                 <TableCell>
-                  <Badge
-                    variant={product.is_active ? "default" : "secondary"}
-                    className={
-                      product.is_active
-                        ? "bg-green-100 text-green-800 hover:bg-green-100"
-                        : ""
-                    }
+                  <Select
+                    value={product.is_active ? "active" : "inactive"}
+                    onValueChange={(value) => {
+                      if ((value === "active" && !product.is_active) ||
+                          (value === "inactive" && product.is_active)) {
+                        onToggleStatus(product);
+                      }
+                    }}
+                    disabled={togglingId === product.id}
                   >
-                    {product.is_active ? "Active" : "Inactive"}
-                  </Badge>
+                    <SelectTrigger className="w-28">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">
+                        <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                          Active
+                        </span>
+                      </SelectItem>
+                      <SelectItem value="inactive">
+                        <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
+                          Inactive
+                        </span>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onToggleStatus(product)}
-                      disabled={togglingId === product.id}
-                      title={product.is_active ? "Deactivate" : "Activate"}
-                      className="cursor-pointer"
-                    >
-                      {product.is_active ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
-                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"

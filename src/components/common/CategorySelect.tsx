@@ -1,12 +1,8 @@
 import { forwardRef } from "react";
 import type { Category } from "@/lib/admin/categories/types";
 
-type CategorySelectProps = {
+type CategorySelectProps = React.SelectHTMLAttributes<HTMLSelectElement> & {
   categories: Category[];
-  value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  name?: string;
-  id?: string;
 };
 
 export const CategorySelect = forwardRef<HTMLSelectElement, CategorySelectProps>(

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { Pencil, Trash2, Eye, EyeOff, ImageIcon } from "lucide-react";
+import { Pencil, Trash2, ImageIcon } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -11,7 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { CategoryFilter } from "./CategoryFilter";
 import type { Category } from "@/lib/admin/categories/types";
 
@@ -71,7 +77,7 @@ export const CategoriesTableView = ({
               </TableHead>
               <TableHead className="w-32">Display Order</TableHead>
               <TableHead className="w-24">Status</TableHead>
-              <TableHead className="w-40 text-right">Actions</TableHead>
+              <TableHead className="w-32 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -110,33 +116,35 @@ export const CategoriesTableView = ({
                   </TableCell>
                   <TableCell>{category.display_order}</TableCell>
                   <TableCell>
-                    <Badge
-                      variant={category.is_active ? "default" : "secondary"}
-                      className={
-                        category.is_active
-                          ? "bg-green-100 text-green-800 hover:bg-green-100"
-                          : ""
-                      }
+                    <Select
+                      value={category.is_active ? "active" : "inactive"}
+                      onValueChange={(value) => {
+                        if ((value === "active" && !category.is_active) ||
+                            (value === "inactive" && category.is_active)) {
+                          onToggleStatus(category);
+                        }
+                      }}
+                      disabled={togglingId === category.id}
                     >
-                      {category.is_active ? "Active" : "Inactive"}
-                    </Badge>
+                      <SelectTrigger className="w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">
+                          <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                            Active
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="inactive">
+                          <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
+                            Inactive
+                          </span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={() => onToggleStatus(category)}
-                        disabled={togglingId === category.id}
-                        title={category.is_active ? "Deactivate" : "Activate"}
-                        className="cursor-pointer"
-                      >
-                        {category.is_active ? (
-                          <EyeOff className="h-4 w-4" />
-                        ) : (
-                          <Eye className="h-4 w-4" />
-                        )}
-                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"
