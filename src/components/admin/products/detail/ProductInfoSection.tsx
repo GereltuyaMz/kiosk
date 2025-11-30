@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getProductVariants } from "@/lib/admin/variants/group-actions";
-import type { ProductVariantWithOptions } from "@/lib/admin/variants/types";
+import { getProductVariantsCount } from "@/lib/admin/variants/group-actions";
+import { getProductAddonsCount } from "@/lib/admin/addons/actions";
 
 type ProductInfoSectionProps = {
   productId: string;
@@ -18,20 +18,30 @@ export const ProductInfoSection = ({
   isActive,
   refreshKey,
 }: ProductInfoSectionProps) => {
-  const [variants, setVariants] = useState<ProductVariantWithOptions[]>([]);
-  const [variantsLoading, setVariantsLoading] = useState(true);
+  const [variantsCount, setVariantsCount] = useState(0);
+  const [addonsCount, setAddonsCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const fetchVariants = async () => {
-      setVariantsLoading(true);
-      const result = await getProductVariants(productId);
-      if (result.success) {
-        setVariants(result.data);
+    const fetchCounts = async () => {
+      setIsLoading(true);
+
+      const [variantsResult, addonsResult] = await Promise.all([
+        getProductVariantsCount(productId),
+        getProductAddonsCount(productId),
+      ]);
+
+      if (variantsResult.success) {
+        setVariantsCount(variantsResult.data);
       }
-      setVariantsLoading(false);
+      if (addonsResult.success) {
+        setAddonsCount(addonsResult.data);
+      }
+
+      setIsLoading(false);
     };
 
-    fetchVariants();
+    fetchCounts();
   }, [productId, refreshKey]);
 
   return (
@@ -54,10 +64,23 @@ export const ProductInfoSection = ({
         <div className="flex items-center gap-2">
           <div>
             <p className="text-xs text-muted-foreground">Variant Groups</p>
-            {variantsLoading ? (
+            {isLoading ? (
               <Skeleton className="h-5 w-8 mt-1" />
             ) : (
-              <p className="text-sm font-medium mt-1">{variants.length}</p>
+              <p className="text-sm font-medium mt-1">{variantsCount}</p>
+            )}
+          </div>
+        </div>
+
+        <div className="h-8 w-px bg-border" />
+
+        <div className="flex items-center gap-2">
+          <div>
+            <p className="text-xs text-muted-foreground">Add-ons</p>
+            {isLoading ? (
+              <Skeleton className="h-5 w-8 mt-1" />
+            ) : (
+              <p className="text-sm font-medium mt-1">{addonsCount}</p>
             )}
           </div>
         </div>

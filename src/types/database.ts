@@ -117,6 +117,38 @@ export type Database = {
           updated_at?: string
         }
       }
+      product_addons: {
+        Row: {
+          id: string
+          product_id: string
+          name: string
+          price: number
+          is_active: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          name: string
+          price: number
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          product_id?: string
+          name?: string
+          price?: number
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
       product_variants: {
         Row: {
           id: string

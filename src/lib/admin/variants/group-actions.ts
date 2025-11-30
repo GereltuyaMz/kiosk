@@ -33,6 +33,24 @@ export const getProductVariants = async (productId: string): Promise<ActionResul
   }
 };
 
+export const getProductVariantsCount = async (productId: string): Promise<ActionResult<number>> => {
+  try {
+    await verifyAuthOrThrow();
+    const supabase = await createClient();
+
+    const { count, error } = await supabase
+      .from("product_variants")
+      .select("*", { count: "exact", head: true })
+      .eq("product_id", productId);
+
+    if (error) throw new Error("Failed to fetch variants count");
+
+    return { success: true, data: count ?? 0 };
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to fetch variants count") };
+  }
+};
+
 export const createVariantGroup = async (productId: string, input: VariantGroupInput): Promise<ActionResult<ProductVariant>> => {
   try {
     await verifyAuthOrThrow();

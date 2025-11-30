@@ -29,6 +29,7 @@ import type {
 import { reorderVariantOptions } from "@/lib/admin/variants/option-actions";
 import { deleteVariantOption } from "@/lib/admin/variants/option-actions";
 import { VariantOptionDialog } from "./VariantOptionDialog";
+import { formatPrice } from "@/lib/utils";
 
 type VariantOptionChipsProps = {
   variant: ProductVariantWithOptions;
@@ -86,7 +87,7 @@ const SortableChip = ({
                   : "text-orange-700 bg-orange-50"
               }`}
             >
-              {priceText}
+              +{formatPrice(Number(priceText))}
             </span>
           )}
         </div>

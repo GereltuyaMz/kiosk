@@ -1,6 +1,6 @@
 # Project Progress
 
-Last Updated: 2025-11-29
+Last Updated: 2025-11-30
 
 ## Current Stage: Week 1 - Admin Panel Foundation
 
@@ -34,10 +34,11 @@ Last Updated: 2025-11-29
   - Product detail page with edit-in-place functionality
     - Breadcrumb navigation (Home → Products → Product name)
     - Mobile-first responsive layout
-    - Side-by-side Basic Information and Product Details sections
+    - Combined Basic Information section with all product fields
     - Multi-image upload and management
     - Save button appears on form changes (isDirty state)
-    - Status toggle switch
+    - Status select dropdown (Active/Inactive)
+    - Product info card showing availability and variant count with real-time updates
     - Variants management with drag-and-drop (completed)
     - Placeholders for Add-ons and Modifiers
 - Variants management (create, read, update, delete)
@@ -46,10 +47,15 @@ Last Updated: 2025-11-29
   - Variant options with price modifiers (e.g., "Small -$1", "Medium $0", "Large +$2")
   - Drag-and-drop reordering (vertical for groups, horizontal for options)
   - Inline add/edit/delete with modal dialogs
-  - Dedicated drag handles on option chips
+  - Dedicated drag handles on option chips with visual separators
+  - Hover-to-reveal edit button on variant group titles
+  - Hover border effect on variant group items
+  - Button disable validation instead of error messages
+  - Clean spacing and visual hierarchy in dialogs
+  - Price modifiers with colored background pills
   - is_required field for kiosk UI (ready for Week 2)
   - Real-time updates and optimistic UI
-  - Empty states and loading indicators
+  - Empty states and skeleton loading indicators
   - Database schema with RLS policies and unique constraints
 
 #### Code Quality & Refactoring
@@ -62,17 +68,26 @@ Last Updated: 2025-11-29
   - ImageUpload for single image uploads
   - MultiImageUpload for gallery-style image uploads
 - Product detail page modular structure:
-  - BasicInfoSection component (≤170 lines)
+  - BasicInfoSection component (combined fields, ≤170 lines)
   - ProductImageSection component (≤170 lines)
+  - ProductInfoSection component (availability & variant count)
   - Organized in `/detail` folder
 - Variants component structure:
   - VariantsSection (main wrapper with data fetching)
   - VariantGroupList (vertical drag-and-drop)
-  - VariantGroupItem (sortable group cards)
-  - VariantGroupDialog (add/edit group modal)
-  - VariantOptionChips (horizontal drag-and-drop chips)
-  - VariantOptionDialog (add/edit option modal)
+  - VariantGroupItem (sortable group cards with hover effects)
+  - VariantGroupDialog (add/edit group modal with validation)
+  - VariantOptionChips (horizontal drag-and-drop chips with styled badges)
+  - VariantOptionDialog (add/edit option modal with validation)
+  - OptionValueInputSection (input section with disabled button state)
+  - AddedValuesSection (display added option values)
   - Organized in `/detail/variants` folder
+- Add-ons component structure:
+  - AddonsSection (main wrapper with data fetching)
+  - AddonList (vertical drag-and-drop)
+  - AddonItem (sortable addon cards with hover effects)
+  - AddonDialog (add/edit modal with validation)
+  - Organized in `/detail/addons` folder
 - Barrel exports for better import organization
 - Next.js Image optimization configured for Supabase
 - Fixed all linting warnings (unused variables, image tags, unescaped entities)
@@ -80,12 +95,28 @@ Last Updated: 2025-11-29
 - Database schema migrations:
   - Migration 005: image_url → images array
   - Migration 006: product_variants and variant_options tables
+  - Migration 007: product_addons table
 - Dependencies added: @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
+- Currency formatting: Mongolian Tugrug (MNT) with comma separators (e.g., 15,000)
+
+- Add-ons management (create, read, update, delete)
+  - Simple flat structure (no hierarchy like variants)
+  - Fixed pricing (e.g., "Extra Cheese ₮2,500", "Bacon ₮3,000")
+  - Drag-and-drop reordering (vertical list)
+  - Inline add/edit/delete with modal dialogs
+  - Hover-to-reveal edit button on addon titles
+  - Hover border effect on addon items
+  - Button disable validation (no error messages)
+  - Active/Inactive status badge
+  - Price display with green badge and + prefix
+  - Clean spacing and visual hierarchy
+  - Real-time updates and optimistic UI
+  - Empty states and loading indicators
+  - Database schema with RLS policies
 
 ### 🚧 In Progress
 
 #### Week 1 Goals
-- Add-ons management (extra items)
 - Modifiers management (customization options)
 - Branding settings (logo, theme)
 - Payment settings (QPay configuration)
@@ -115,7 +146,8 @@ Last Updated: 2025-11-29
 - [x] Admin panel structure
 - [x] Menu management system (Categories & Products CRUD)
 - [x] Product variants configuration (Variants with drag-and-drop)
-- [ ] Product customization (Add-ons, Modifiers)
+- [x] Product add-ons (Extra items with fixed pricing)
+- [ ] Product modifiers (Customization options)
 - [ ] Kiosk ordering interface
 - [ ] Kitchen display system
 - [ ] Payment integration

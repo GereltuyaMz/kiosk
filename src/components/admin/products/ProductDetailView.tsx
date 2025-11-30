@@ -17,6 +17,7 @@ import { BasicInfoSection } from "./detail/BasicInfoSection";
 import { ProductImageSection } from "./detail/ProductImageSection";
 import { ProductInfoSection } from "./detail/ProductInfoSection";
 import { VariantsSection } from "./detail/variants";
+import { AddonsSection } from "./detail/addons";
 import { useBreadcrumb } from "@/contexts/BreadcrumbContext";
 
 type ProductDetailViewProps = {
@@ -144,17 +145,7 @@ export const ProductDetailView = ({
 
         <VariantsSection productId={product.id} onUpdate={handleVariantUpdate} />
 
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Add-ons</h2>
-          <div className="rounded-lg border bg-card p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Add-ons management coming soon
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Add extra items (e.g., Extra Cheese, Bacon)
-            </p>
-          </div>
-        </div>
+        <AddonsSection productId={product.id} onUpdate={handleVariantUpdate} />
 
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Modifiers</h2>
