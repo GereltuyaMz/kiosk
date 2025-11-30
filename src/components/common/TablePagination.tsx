@@ -12,37 +12,27 @@ type TablePaginationProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  itemsPerPage: number;
-  totalItems: number;
-  currentItemsCount: number;
-  itemLabel?: string;
 };
 
 export const TablePagination = ({
   currentPage,
   totalPages,
   onPageChange,
-  itemsPerPage,
-  totalItems,
-  currentItemsCount,
-  itemLabel = "items",
 }: TablePaginationProps) => {
   if (totalPages <= 1) return null;
 
-  const startIndex = currentItemsCount > 0 ? (currentPage - 1) * itemsPerPage + 1 : 0;
-  const endIndex = Math.min(currentPage * itemsPerPage, totalItems);
-
   return (
     <div className="flex flex-col gap-4 px-2 py-4 sm:flex-row sm:items-center sm:justify-between">
-      <p className="text-sm text-muted-foreground">
-        Showing {startIndex} to {endIndex} of {totalItems} {itemLabel}
-      </p>
       <Pagination>
         <PaginationContent>
           <PaginationItem>
             <PaginationPrevious
               onClick={() => currentPage > 1 && onPageChange(currentPage - 1)}
-              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
             />
           </PaginationItem>
 
@@ -75,8 +65,14 @@ export const TablePagination = ({
 
           <PaginationItem>
             <PaginationNext
-              onClick={() => currentPage < totalPages && onPageChange(currentPage + 1)}
-              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+              onClick={() =>
+                currentPage < totalPages && onPageChange(currentPage + 1)
+              }
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
             />
           </PaginationItem>
         </PaginationContent>

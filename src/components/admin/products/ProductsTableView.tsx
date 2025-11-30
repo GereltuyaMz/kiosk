@@ -41,7 +41,6 @@ type ProductsTableViewProps = {
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  totalItems: number;
 };
 
 export const ProductsTableView = ({
@@ -61,7 +60,6 @@ export const ProductsTableView = ({
   currentPage,
   totalPages,
   onPageChange,
-  totalItems,
 }: ProductsTableViewProps) => {
   const router = useRouter();
 
@@ -117,91 +115,95 @@ export const ProductsTableView = ({
               </TableRow>
             ) : (
               products.map((product) => (
-              <TableRow
-                key={product.id}
-                className={!product.is_active ? "text-muted-foreground" : ""}
-              >
-                <TableCell>
-                  {product.images && product.images.length > 0 ? (
-                    <Image
-                      src={product.images[0]}
-                      alt={product.name}
-                      width={80}
-                      height={80}
-                      className="w-20 h-20 object-cover rounded"
-                    />
-                  ) : (
-                    <div className="w-20 h-20 bg-muted rounded flex items-center justify-center">
-                      <ImageIcon className="h-10 w-10 text-muted-foreground" />
-                    </div>
-                  )}
-                </TableCell>
-                <TableCell className="font-medium">
-                  <button
-                    onClick={() => router.push(`/admin/products/${product.id}`)}
-                    className="text-left cursor-pointer text-blue-600 underline hover:text-blue-800 transition-colors"
-                  >
-                    {product.name}
-                  </button>
-                </TableCell>
-                <TableCell className="hidden md:table-cell">
-                  {getCategoryName(product.category_id || "")}
-                </TableCell>
-                <TableCell>{Number(product.base_price)}</TableCell>
-                <TableCell>
-                  {product.display_order ? product.display_order : "—"}
-                </TableCell>
-                <TableCell>
-                  <Select
-                    value={product.is_active ? "active" : "inactive"}
-                    onValueChange={(value) => {
-                      if ((value === "active" && !product.is_active) ||
-                          (value === "inactive" && product.is_active)) {
-                        onToggleStatus(product);
+                <TableRow
+                  key={product.id}
+                  className={!product.is_active ? "text-muted-foreground" : ""}
+                >
+                  <TableCell>
+                    {product.images && product.images.length > 0 ? (
+                      <Image
+                        src={product.images[0]}
+                        alt={product.name}
+                        width={80}
+                        height={80}
+                        className="w-20 h-20 object-cover rounded"
+                      />
+                    ) : (
+                      <div className="w-20 h-20 bg-muted rounded flex items-center justify-center">
+                        <ImageIcon className="h-10 w-10 text-muted-foreground" />
+                      </div>
+                    )}
+                  </TableCell>
+                  <TableCell className="font-medium">
+                    <button
+                      onClick={() =>
+                        router.push(`/admin/products/${product.id}`)
                       }
-                    }}
-                    disabled={togglingId === product.id}
-                  >
-                    <SelectTrigger className="w-28">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="active">
-                        <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                          Active
-                        </span>
-                      </SelectItem>
-                      <SelectItem value="inactive">
-                        <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
-                          Inactive
-                        </span>
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center justify-end gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(product)}
-                      title="Edit"
-                      className="cursor-pointer"
+                      className="text-left cursor-pointer text-blue-600 underline hover:text-blue-800 transition-colors"
                     >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onDelete(product)}
-                      title="Delete"
-                      className="text-red-600 hover:text-red-700 cursor-pointer"
+                      {product.name}
+                    </button>
+                  </TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    {getCategoryName(product.category_id || "")}
+                  </TableCell>
+                  <TableCell>{Number(product.base_price)}</TableCell>
+                  <TableCell>
+                    {product.display_order ? product.display_order : "—"}
+                  </TableCell>
+                  <TableCell>
+                    <Select
+                      value={product.is_active ? "active" : "inactive"}
+                      onValueChange={(value) => {
+                        if (
+                          (value === "active" && !product.is_active) ||
+                          (value === "inactive" && product.is_active)
+                        ) {
+                          onToggleStatus(product);
+                        }
+                      }}
+                      disabled={togglingId === product.id}
                     >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
+                      <SelectTrigger className="w-28">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="active">
+                          <span className="inline-flex items-center rounded-md bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                            Active
+                          </span>
+                        </SelectItem>
+                        <SelectItem value="inactive">
+                          <span className="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800">
+                            Inactive
+                          </span>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEdit(product)}
+                        title="Edit"
+                        className="cursor-pointer"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDelete(product)}
+                        title="Delete"
+                        className="text-red-600 hover:text-red-700 cursor-pointer"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
               ))
             )}
           </TableBody>
@@ -212,10 +214,10 @@ export const ProductsTableView = ({
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={onPageChange}
-        itemsPerPage={10}
-        totalItems={totalItems}
-        currentItemsCount={products.length}
-        itemLabel="products"
+        // itemsPerPage={10}
+        // totalItems={totalItems}
+        // currentItemsCount={products.length}
+        // itemLabel="products"
       />
     </div>
   );

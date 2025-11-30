@@ -1,0 +1,10 @@
+/* Kiosk-specific styles for fixed 1920x1080 canvas */
+@layer base {
+  html,
+  body {
+    overflow: hidden;
+    width: 1080px;
+    height: 1920px;
+    position: fixed;
+  }
+}

@@ -6,7 +6,10 @@ import { toast } from "sonner";
 import { EmptyState, DeleteItemDialog } from "@/components/common";
 import { ProductDialog } from "./ProductDialog";
 import { ProductsTableView } from "./ProductsTableView";
-import { toggleProductStatus, deleteProduct } from "@/lib/admin/products/actions";
+import {
+  toggleProductStatus,
+  deleteProduct,
+} from "@/lib/admin/products/actions";
 import type { Product } from "@/lib/admin/products/types";
 import type { Category } from "@/lib/admin/categories/types";
 
@@ -23,15 +26,21 @@ export const ProductsTable = ({ products, categories }: ProductsTableProps) => {
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "active" | "inactive"
+  >("all");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
-      const matchesSearch = searchQuery === "" ||
+      const matchesSearch =
+        searchQuery === "" ||
         product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        (product.description?.toLowerCase().includes(searchQuery.toLowerCase()) ?? false);
+        (product.description
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()) ??
+          false);
 
       const matchesStatus =
         statusFilter === "all" ||
@@ -149,7 +158,6 @@ export const ProductsTable = ({ products, categories }: ProductsTableProps) => {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-        totalItems={filteredProducts.length}
       />
 
       <ProductDialog
