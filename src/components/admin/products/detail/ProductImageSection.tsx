@@ -1,6 +1,5 @@
 import { MultiImageUpload } from "@/components/common";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
 
 type ProductImageSectionProps = {
   value: string[];
@@ -14,9 +13,8 @@ export const ProductImageSection = ({
   disabled,
 }: ProductImageSectionProps) => {
   return (
-    <Card className="py-4 px-3 rounded-md gap-3 shadow-none">
-      <h2 className="text-lg font-semibold">Product Images</h2>
-      <Separator />
+    <Card className="p-7 rounded-xl gap-3">
+      <h2 className="text-lg font-semibold mb-5">Product Images</h2>
       <MultiImageUpload
         value={value}
         onChange={onChange}

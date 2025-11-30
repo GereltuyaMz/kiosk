@@ -1,6 +1,6 @@
 # Project Progress
 
-Last Updated: 2025-11-28
+Last Updated: 2025-11-29
 
 ## Current Stage: Week 1 - Admin Panel Foundation
 
@@ -38,32 +38,53 @@ Last Updated: 2025-11-28
     - Multi-image upload and management
     - Save button appears on form changes (isDirty state)
     - Status toggle switch
-    - Placeholders for Variants, Add-ons, and Modifiers
+    - Variants management with drag-and-drop (completed)
+    - Placeholders for Add-ons and Modifiers
+- Variants management (create, read, update, delete)
+  - Two-level hierarchy (Variant Groups → Variant Options)
+  - Variant groups (e.g., "Size", "Type", "Crust")
+  - Variant options with price modifiers (e.g., "Small -$1", "Medium $0", "Large +$2")
+  - Drag-and-drop reordering (vertical for groups, horizontal for options)
+  - Inline add/edit/delete with modal dialogs
+  - Dedicated drag handles on option chips
+  - is_required field for kiosk UI (ready for Week 2)
+  - Real-time updates and optimistic UI
+  - Empty states and loading indicators
+  - Database schema with RLS policies and unique constraints
 
 #### Code Quality & Refactoring
 - Component separation (Table logic vs. View components)
 - Reusable common components:
   - FormField wrapper for consistent form layouts
   - CategorySelect for dropdown selections
-  - PriceInput with automatic formatting
+  - PriceInput with automatic formatting (supports negative values for modifiers)
   - TablePagination for all paginated tables
   - ImageUpload for single image uploads
   - MultiImageUpload for gallery-style image uploads
 - Product detail page modular structure:
   - BasicInfoSection component (≤170 lines)
-  - ProductDetailsSection component (≤170 lines)
   - ProductImageSection component (≤170 lines)
   - Organized in `/detail` folder
+- Variants component structure:
+  - VariantsSection (main wrapper with data fetching)
+  - VariantGroupList (vertical drag-and-drop)
+  - VariantGroupItem (sortable group cards)
+  - VariantGroupDialog (add/edit group modal)
+  - VariantOptionChips (horizontal drag-and-drop chips)
+  - VariantOptionDialog (add/edit option modal)
+  - Organized in `/detail/variants` folder
 - Barrel exports for better import organization
 - Next.js Image optimization configured for Supabase
-- Fixed all linting warnings (unused variables, image tags)
+- Fixed all linting warnings (unused variables, image tags, unescaped entities)
 - TypeScript strict mode compliance
-- Database schema migration (image_url → images array)
+- Database schema migrations:
+  - Migration 005: image_url → images array
+  - Migration 006: product_variants and variant_options tables
+- Dependencies added: @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
 
 ### 🚧 In Progress
 
 #### Week 1 Goals
-- Variants management (size, type options)
 - Add-ons management (extra items)
 - Modifiers management (customization options)
 - Branding settings (logo, theme)
@@ -93,7 +114,8 @@ Last Updated: 2025-11-28
 - [x] Project setup and authentication
 - [x] Admin panel structure
 - [x] Menu management system (Categories & Products CRUD)
-- [ ] Product configuration (Variants, Add-ons, Modifiers)
+- [x] Product variants configuration (Variants with drag-and-drop)
+- [ ] Product customization (Add-ons, Modifiers)
 - [ ] Kiosk ordering interface
 - [ ] Kitchen display system
 - [ ] Payment integration
@@ -102,6 +124,8 @@ Last Updated: 2025-11-28
 ## Notes
 
 - Multi-tenant architecture implemented
-- Using Supabase for backend services
+- Using Supabase for backend services (PostgreSQL, Storage, RLS)
 - Next.js 16 with React 19
 - Mobile-first responsive design
+- Drag-and-drop functionality with @dnd-kit
+- TypeScript strict mode enabled

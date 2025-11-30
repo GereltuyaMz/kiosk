@@ -21,10 +21,7 @@ import {
   PriceInput,
   MultiImageUpload,
 } from "@/components/common";
-import {
-  productSchema,
-  type ProductInput,
-} from "@/lib/admin/products/schemas";
+import { productSchema, type ProductInput } from "@/lib/admin/products/schemas";
 import { createProduct, updateProduct } from "@/lib/admin/products/actions";
 import type { Product } from "@/lib/admin/products/types";
 import type { Category } from "@/lib/admin/categories/types";
@@ -160,7 +157,6 @@ export const ProductDialog = ({
             onChange={(urls) => setValue("images", urls, { shouldDirty: true })}
             bucket="product-images"
             disabled={isSubmitting}
-            label="Product Images (Optional)"
             maxImages={5}
           />
 
@@ -223,7 +219,11 @@ export const ProductDialog = ({
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting} className="cursor-pointer">
+            <Button
+              type="submit"
+              disabled={isSubmitting}
+              className="cursor-pointer"
+            >
               {isSubmitting ? "Saving..." : isEdit ? "Update" : "Create"}
             </Button>
           </DialogFooter>

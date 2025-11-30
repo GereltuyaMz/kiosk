@@ -53,7 +53,7 @@ export const Header = () => {
             )}
           </BreadcrumbItem>
           {breadcrumbItems.map((item, index) => (
-            <div key={index} className="flex items-center">
+            <div key={index} className="flex items-center gap-2">
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 {item.href && index < breadcrumbItems.length - 1 ? (

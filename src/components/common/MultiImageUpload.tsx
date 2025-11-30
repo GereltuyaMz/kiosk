@@ -4,7 +4,11 @@ import { useState, useCallback, useRef } from "react";
 import { Upload, X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { uploadImage, getPublicUrl, type BucketName } from "@/lib/storage/upload";
+import {
+  uploadImage,
+  getPublicUrl,
+  type BucketName,
+} from "@/lib/storage/upload";
 import { getStorageUploadContext } from "@/lib/storage/actions";
 import { cn } from "@/lib/utils";
 
@@ -13,7 +17,6 @@ type MultiImageUploadProps = {
   onChange: (urls: string[]) => void;
   bucket: BucketName;
   disabled?: boolean;
-  label?: string;
   error?: string;
   maxImages?: number;
 };
@@ -23,7 +26,6 @@ export const MultiImageUpload = ({
   onChange,
   bucket,
   disabled = false,
-  label = "Images",
   error,
   maxImages = 5,
 }: MultiImageUploadProps) => {
@@ -100,12 +102,13 @@ export const MultiImageUpload = ({
 
   return (
     <div className="space-y-2">
-      {label && <Label>{label}</Label>}
-
       {value.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {value.map((url, index) => (
-            <div key={index} className="relative border rounded-lg overflow-hidden">
+            <div
+              key={index}
+              className="relative border rounded-lg overflow-hidden"
+            >
               <img
                 src={url}
                 alt={`Product image ${index + 1}`}
@@ -154,7 +157,9 @@ export const MultiImageUpload = ({
             <div className="space-y-1">
               <Upload className="h-6 w-6 mx-auto text-muted-foreground" />
               <div className="text-xs">
-                <p className="font-medium">Add image ({value.length}/{maxImages})</p>
+                <p className="font-medium">
+                  Add image ({value.length}/{maxImages})
+                </p>
                 <p className="text-muted-foreground">Drag & drop or click</p>
               </div>
             </div>

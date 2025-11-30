@@ -7,6 +7,7 @@ type PriceInputProps = {
   id?: string;
   placeholder?: string;
   disabled?: boolean;
+  allowNegative?: boolean;
 };
 
 const formatPriceForInput = (value: number): string => {
@@ -20,6 +21,7 @@ export const PriceInput = ({
   id,
   placeholder = "0",
   disabled,
+  allowNegative = false,
 }: PriceInputProps) => {
   const [displayValue, setDisplayValue] = useState("");
 
@@ -30,8 +32,10 @@ export const PriceInput = ({
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const rawValue = e.target.value.replace(/,/g, "");
 
-    if (rawValue === "" || /^\d*\.?\d*$/.test(rawValue)) {
-      setDisplayValue(rawValue ? parseFloat(rawValue).toLocaleString("en-US") : "");
+    const regex = allowNegative ? /^-?\d*\.?\d*$/ : /^\d*\.?\d*$/;
+
+    if (rawValue === "" || rawValue === "-" || regex.test(rawValue)) {
+      setDisplayValue(rawValue ? (rawValue === "-" ? "-" : parseFloat(rawValue).toLocaleString("en-US")) : "");
       onChange(parseFloat(rawValue) || 0);
     }
   };

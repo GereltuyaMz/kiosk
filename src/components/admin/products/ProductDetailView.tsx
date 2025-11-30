@@ -6,13 +6,17 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { updateProduct, toggleProductStatus } from "@/lib/admin/products/actions";
+import {
+  updateProduct,
+  toggleProductStatus,
+} from "@/lib/admin/products/actions";
 import { productSchema, type ProductInput } from "@/lib/admin/products/schemas";
 import type { Product } from "@/lib/admin/products/types";
 import type { Category } from "@/lib/admin/categories/types";
 import { BasicInfoSection } from "./detail/BasicInfoSection";
-import { ProductDetailsSection } from "./detail/ProductDetailsSection";
 import { ProductImageSection } from "./detail/ProductImageSection";
+import { ProductInfoSection } from "./detail/ProductInfoSection";
+import { VariantsSection } from "./detail/variants";
 import { useBreadcrumb } from "@/contexts/BreadcrumbContext";
 
 type ProductDetailViewProps = {
@@ -20,12 +24,16 @@ type ProductDetailViewProps = {
   categories: Category[];
 };
 
-export const ProductDetailView = ({ product, categories }: ProductDetailViewProps) => {
+export const ProductDetailView = ({
+  product,
+  categories,
+}: ProductDetailViewProps) => {
   const router = useRouter();
   const { setItems } = useBreadcrumb();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isActive, setIsActive] = useState(product.is_active);
   const [isTogglingStatus, setIsTogglingStatus] = useState(false);
+  const [variantRefreshKey, setVariantRefreshKey] = useState(0);
 
   const {
     register,
@@ -59,6 +67,10 @@ export const ProductDetailView = ({ product, categories }: ProductDetailViewProp
     };
   }, [product.name, setItems]);
 
+  const handleVariantUpdate = () => {
+    setVariantRefreshKey((prev) => prev + 1);
+  };
+
   const onSubmit = async (data: ProductInput) => {
     setIsSubmitting(true);
     try {
@@ -77,13 +89,14 @@ export const ProductDetailView = ({ product, categories }: ProductDetailViewProp
     }
   };
 
-  const handleStatusToggle = async (checked: boolean) => {
+  const handleStatusChange = async (value: string) => {
+    const newStatus = value === "active";
     setIsTogglingStatus(true);
     try {
       const result = await toggleProductStatus(product.id);
       if (result.success) {
-        setIsActive(checked);
-        toast.success(`Product ${checked ? "activated" : "deactivated"}`);
+        setIsActive(newStatus);
+        toast.success(`Product ${newStatus ? "activated" : "deactivated"}`);
         router.refresh();
       } else {
         toast.error(result.error);
@@ -97,52 +110,39 @@ export const ProductDetailView = ({ product, categories }: ProductDetailViewProp
 
   return (
     <div className="space-y-6">
-      <div>
+      <div className="flex space-y-4 justify-between">
         <h1 className="text-2xl font-bold md:text-3xl">{product.name}</h1>
+        <ProductInfoSection
+          productId={product.id}
+          isActive={isActive}
+          refreshKey={variantRefreshKey}
+        />
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         <div className="grid gap-6 md:grid-cols-2">
-          <div className="space-y-6">
-            <BasicInfoSection
-              register={register}
-              errors={errors}
-              isSubmitting={isSubmitting}
-            />
-
-            <ProductImageSection
-              value={watch("images") || []}
-              onChange={(urls) => setValue("images", urls, { shouldDirty: true })}
-              disabled={isSubmitting}
-            />
-          </div>
-          <div className="row-span-1">
-
-          <ProductDetailsSection
+          <BasicInfoSection
             register={register}
             errors={errors}
             isSubmitting={isSubmitting}
             categories={activeCategories}
             basePrice={watch("base_price")}
-            onBasePriceChange={(value) => setValue("base_price", value, { shouldDirty: true })}
+            onBasePriceChange={(value) =>
+              setValue("base_price", value, { shouldDirty: true })
+            }
             isActive={isActive}
-            onStatusToggle={handleStatusToggle}
+            onStatusChange={handleStatusChange}
             isTogglingStatus={isTogglingStatus}
           />
-          </div>
+
+          <ProductImageSection
+            value={watch("images") || []}
+            onChange={(urls) => setValue("images", urls, { shouldDirty: true })}
+            disabled={isSubmitting}
+          />
         </div>
 
-        <div className="space-y-4">
-          <h2 className="text-lg font-semibold">Variants</h2>
-          <div className="rounded-lg border bg-card p-8 text-center">
-            <p className="text-sm text-muted-foreground">
-              Variants management coming soon
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">
-              Add size and type variations (e.g., Small, Medium, Large)
-            </p>
-          </div>
-        </div>
+        <VariantsSection productId={product.id} onUpdate={handleVariantUpdate} />
 
         <div className="space-y-4">
           <h2 className="text-lg font-semibold">Add-ons</h2>

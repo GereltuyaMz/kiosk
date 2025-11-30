@@ -117,6 +117,64 @@ export type Database = {
           updated_at?: string
         }
       }
+      product_variants: {
+        Row: {
+          id: string
+          product_id: string
+          name: string
+          is_required: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          product_id: string
+          name: string
+          is_required?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          product_id?: string
+          name?: string
+          is_required?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
+      variant_options: {
+        Row: {
+          id: string
+          variant_id: string
+          name: string
+          price_modifier: number
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          variant_id: string
+          name: string
+          price_modifier?: number
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          variant_id?: string
+          name?: string
+          price_modifier?: number
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+      }
       tenants: {
         Row: {
           id: string
