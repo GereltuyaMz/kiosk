@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useTransition } from "react";
 import { CategoryProducts } from "@/components/kiosk/CategoryProducts";
-import { getKioskCategories, getKioskProducts } from "@/lib/kiosk/actions";
 import type { Category } from "@/lib/admin/categories/types";
 import type { Product } from "@/lib/admin/products/types";
 

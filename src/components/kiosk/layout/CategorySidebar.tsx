@@ -3,6 +3,7 @@
 import { cn } from "@/lib/utils";
 import type { Category } from "@/lib/admin/categories/types";
 import Image from "next/image";
+import { Menu, Flower } from "lucide-react";
 
 type CategorySidebarProps = {
   categories: Category[];
@@ -16,49 +17,80 @@ export const CategorySidebar = ({
   onSelectCategory,
 }: CategorySidebarProps) => {
   return (
-    <aside className="w-[200px] h-screen border-r bg-white overflow-y-auto">
-      <div className="p-3 space-y-2">
-        {/* All Products Button */}
-        <button
-          onClick={() => onSelectCategory(null)}
+    <aside className="flex w-40 flex-col gap-3 bg-white p-6 shadow-[4px_0_24px_rgba(0,0,0,0.08)]">
+      <button
+        onClick={() => onSelectCategory(null)}
+        className={cn(
+          "flex flex-col items-center justify-center gap-3 rounded-2xl p-5 transition-all duration-200",
+          "hover:bg-neutral-100 active:scale-95",
+          selectedCategoryId === null
+            ? "bg-linear-to-br from-pink-100 to-purple-100 text-pink-600 shadow-md"
+            : "bg-white text-neutral-600"
+        )}
+      >
+        <div
           className={cn(
-            "w-full min-h-[60px] rounded-xl px-4 py-3 text-left font-medium transition-all",
-            "active:scale-[0.98]",
-            selectedCategoryId === null
-              ? "bg-blue-600 text-white shadow-md"
-              : "bg-gray-100 hover:bg-gray-200 active:bg-gray-300"
+            "transition-colors",
+            selectedCategoryId === null ? "text-pink-600" : "text-neutral-500"
           )}
         >
-          <span className="text-base">All Products</span>
-        </button>
+          <Menu className="h-8 w-8" />
+        </div>
+        <span
+          className={cn(
+            "text-center text-sm font-semibold leading-tight",
+            selectedCategoryId === null ? "text-pink-600" : "text-neutral-700"
+          )}
+        >
+          All
+        </span>
+      </button>
 
-        {/* Category Buttons */}
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onSelectCategory(category.id)}
+      {categories.map((category) => (
+        <button
+          key={category.id}
+          onClick={() => onSelectCategory(category.id)}
+          className={cn(
+            "flex flex-col items-center justify-center gap-3 rounded-2xl p-5 transition-all duration-200",
+            "hover:bg-neutral-100 active:scale-95",
+            selectedCategoryId === category.id
+              ? "bg-linear-to-br from-pink-100 to-purple-100 text-pink-600 shadow-md"
+              : "bg-white text-neutral-600"
+          )}
+        >
+          {category.image_url ? (
+            <div className="relative h-10 w-10 overflow-hidden rounded-lg">
+              <Image
+                src={category.image_url}
+                alt={category.name}
+                fill
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              className={cn(
+                "transition-colors",
+                selectedCategoryId === category.id
+                  ? "text-pink-600"
+                  : "text-neutral-500"
+              )}
+            >
+              <Flower className="h-8 w-8" />
+            </div>
+          )}
+          <span
             className={cn(
-              "w-full min-h-[60px] rounded-xl px-4 py-3 text-left font-medium transition-all",
-              "flex items-center gap-3 active:scale-[0.98]",
+              "text-center text-sm font-semibold leading-tight",
               selectedCategoryId === category.id
-                ? "bg-blue-600 text-white shadow-md"
-                : "bg-gray-100 hover:bg-gray-200 active:bg-gray-300"
+                ? "text-pink-600"
+                : "text-neutral-700"
             )}
           >
-            {category.image_url && (
-              <div className="relative w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 bg-white">
-                <Image
-                  src={category.image_url}
-                  alt={category.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            )}
-            <span className="text-base line-clamp-2 flex-1">{category.name}</span>
-          </button>
-        ))}
-      </div>
+            {category.name}
+          </span>
+        </button>
+      ))}
     </aside>
   );
 };

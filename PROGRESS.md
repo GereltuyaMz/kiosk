@@ -117,9 +117,9 @@ Last Updated: 2025-11-30
 ### 🚧 In Progress
 
 #### Week 1 Goals
-- Modifiers management (customization options)
-- Branding settings (logo, theme)
-- Payment settings (QPay configuration)
+- Modifiers management (customization options) - on hold
+- Branding settings (logo, theme) - on hold
+- Payment settings (QPay configuration) - on hold
 
 ### 📋 Upcoming
 

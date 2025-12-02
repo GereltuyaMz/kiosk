@@ -1,13 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Coffee, Menu, Flower } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { formatPrice } from "@/lib/utils";
 import Image from "next/image";
 import type { Category } from "@/lib/admin/categories/types";
 import type { Product } from "@/lib/admin/products/types";
 import { LoadingProducts } from "./shared";
+import { CategorySidebar } from "./layout";
 
 type CategoryProductsProps = {
   categories: Category[];
@@ -29,83 +28,11 @@ export const CategoryProducts = ({
 
   return (
     <div className="flex h-full bg-neutral-50">
-      <div className="flex w-[160px] flex-col gap-3 bg-white p-6 shadow-[4px_0_24px_rgba(0,0,0,0.08)]">
-        {/* All Products Button */}
-        <button
-          onClick={() => onSelectCategory(null)}
-          className={cn(
-            "flex flex-col items-center justify-center gap-3 rounded-2xl p-5 transition-all duration-200",
-            "hover:bg-neutral-100 active:scale-95",
-            selectedCategoryId === null
-              ? "bg-gradient-to-br from-pink-100 to-purple-100 text-pink-600 shadow-md"
-              : "bg-white text-neutral-600"
-          )}
-        >
-          <div
-            className={cn(
-              "transition-colors",
-              selectedCategoryId === null ? "text-pink-600" : "text-neutral-500"
-            )}
-          >
-            <Menu className="h-8 w-8" />
-          </div>
-          <span
-            className={cn(
-              "text-center text-sm font-semibold leading-tight",
-              selectedCategoryId === null ? "text-pink-600" : "text-neutral-700"
-            )}
-          >
-            All
-          </span>
-        </button>
-
-        {/* Category Buttons */}
-        {categories.map((category) => (
-          <button
-            key={category.id}
-            onClick={() => onSelectCategory(category.id)}
-            className={cn(
-              "flex flex-col items-center justify-center gap-3 rounded-2xl p-5 transition-all duration-200",
-              "hover:bg-neutral-100 active:scale-95",
-              selectedCategoryId === category.id
-                ? "bg-gradient-to-br from-pink-100 to-purple-100 text-pink-600 shadow-md"
-                : "bg-white text-neutral-600"
-            )}
-          >
-            {category.image_url ? (
-              <div className="relative h-10 w-10 overflow-hidden rounded-lg">
-                <Image
-                  src={category.image_url}
-                  alt={category.name}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-            ) : (
-              <div
-                className={cn(
-                  "transition-colors",
-                  selectedCategoryId === category.id
-                    ? "text-pink-600"
-                    : "text-neutral-500"
-                )}
-              >
-                <Flower className="h-8 w-8" />
-              </div>
-            )}
-            <span
-              className={cn(
-                "text-center text-sm font-semibold leading-tight",
-                selectedCategoryId === category.id
-                  ? "text-pink-600"
-                  : "text-neutral-700"
-              )}
-            >
-              {category.name}
-            </span>
-          </button>
-        ))}
-      </div>
+      <CategorySidebar
+        categories={categories}
+        selectedCategoryId={selectedCategoryId}
+        onSelectCategory={onSelectCategory}
+      />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Header */}
@@ -123,7 +50,9 @@ export const CategoryProducts = ({
             <LoadingProducts />
           ) : products.length === 0 ? (
             <div className="flex h-64 items-center justify-center">
-              <p className="text-xl text-neutral-500">No products available</p>
+              <p className="text-2xl text-neutral-500 font-bold">
+                No products available
+              </p>
             </div>
           ) : (
             <div className="grid grid-cols-3 gap-8 pb-32">
