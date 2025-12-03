@@ -12,7 +12,7 @@ type CategoryProductsProps = {
   categories: Category[];
   products: Product[];
   selectedCategoryId: string | null;
-  onSelectCategory: (categoryId: string | null) => void;
+  onSelectCategory: (categoryId: string) => void;
   isLoading: boolean;
 };
 
@@ -23,8 +23,9 @@ export const CategoryProducts = ({
   onSelectCategory,
   isLoading,
 }: CategoryProductsProps) => {
-  const selectedCategoryName =
-    categories.find((c) => c.id === selectedCategoryId)?.name || "All Products";
+  const selectedCategoryName = categories.find(
+    (c) => c.id === selectedCategoryId
+  )?.name;
 
   return (
     <div className="flex h-full bg-neutral-50">
@@ -55,7 +56,7 @@ export const CategoryProducts = ({
               </p>
             </div>
           ) : (
-            <div className="grid grid-cols-3 gap-8 pb-32">
+            <div className="grid grid-cols-2 gap-8 pb-32">
               {products.map((product) => {
                 const imageUrl =
                   product.images && product.images.length > 0
@@ -84,7 +85,7 @@ export const CategoryProducts = ({
                       </h3>
                       <Button className="h-12 gap-2 rounded-full bg-neutral-100 px-6 text-lg font-bold text-neutral-900 hover:bg-neutral-200">
                         <span className="text-pink-600">+</span>
-                        {formatPrice(Number(product.base_price))}₮
+                        {formatPrice(Number(product.base_price))}
                       </Button>
                     </div>
                   </div>

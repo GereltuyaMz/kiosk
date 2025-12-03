@@ -13,10 +13,9 @@ export default async function KioskLayout({
     redirect("/login");
   }
 
-  // // Allow ADMIN and STAFF to set up kiosk for customers
-  // if (user.role !== "KIOSK" && user.role !== "ADMIN" && user.role !== "STAFF") {
-  //   redirect("/login");
-  // }
+  if (user.role !== "KIOSK" && user.role !== "ADMIN" && user.role !== "STAFF") {
+    redirect("/login");
+  }
 
   return (
     <div className="h-screen w-screen overflow-hidden bg-white">{children}</div>

@@ -1,0 +1,15 @@
+{
+  "name": "pos-bridge",
+  "version": "1.0.0",
+  "description": "Local bridge service for WizarPOS/OPC payment terminal integration",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node --watch app.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "ws": "^8.18.3"
+  }
+}

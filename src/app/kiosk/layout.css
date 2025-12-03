@@ -1,4 +1,4 @@
-/* Kiosk-specific styles for fixed 1920x1080 canvas */
+/* Kiosk-specific styles for fixed 1080x1920 canvas (portrait) */
 @layer base {
   html,
   body {
@@ -6,5 +6,30 @@
     width: 1080px;
     height: 1920px;
     position: fixed;
+  }
+}
+
+/* Add to Cart Animation Keyframes */
+
+@keyframes badgePop {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.4);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  100% {
+    transform: scale(2.5);
+    opacity: 0;
   }
 }

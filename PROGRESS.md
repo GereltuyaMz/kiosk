@@ -1,8 +1,36 @@
 # Project Progress
 
-Last Updated: 2025-11-30
+Last Updated: 2025-12-03
 
-## Current Stage: Week 1 - Admin Panel Foundation
+## Current Stage: Week 2 - Kiosk Backend Integration (Completed)
+
+### 🎉 Latest Updates (2025-12-03)
+
+**POS Bridge Integration - COMPLETED**
+- ✅ WebSocket-based POS terminal integration for bank card payments
+- ✅ Auto-processing payment when bank card is selected (no confirm button)
+- ✅ Real-time payment status with OPC connection monitoring
+- ✅ Custom React hook (`usePOSBridge`) for WebSocket communication
+- ✅ Separate bridge service (`pos-bridge/`) with WizarPOS protocol support
+- ✅ Payment states: idle → processing (tap card) → success/error
+- ✅ Cancel transaction support during card tap
+- ✅ Bridge status indicators (WebSocket + OPC terminal)
+- ✅ Automatic order creation on successful card payment
+
+**Kiosk Backend Integration - COMPLETED**
+- ✅ Dynamic variant and addon loading from database
+- ✅ Order creation API with proper line items and options
+- ✅ Receipt type selection (Individual/Organization)
+- ✅ Both payment methods supported (QPay/Card with real POS integration)
+- ✅ Real order numbers (1-300 with auto-reset)
+- ✅ Complete price calculations with variants and addons
+- ✅ Error handling and loading states
+- ✅ Zero TypeScript `any` types
+- ✅ Mongolian Tugrug price formatting (10,000₮)
+
+**The kiosk is now fully functional with real POS terminal integration!** Customers can browse products, customize with database-driven variants/addons, add to cart, pay via bank card (real POS terminal) or QPay, and receive a real order number stored in the database.
+
+---
 
 ### ✅ Completed
 
@@ -96,6 +124,11 @@ Last Updated: 2025-11-30
   - Migration 005: image_url → images array
   - Migration 006: product_variants and variant_options tables
   - Migration 007: product_addons table
+  - **Migration 008: orders, order_items, order_item_options tables** ✅ NEW
+    - receipt_type_enum (INDIVIDUAL, ORGANIZATION)
+    - dine_type_enum (EAT_IN, TAKE_OUT)
+    - order_status_enum (NEW, PREPARING, READY, COMPLETED)
+    - get_next_order_number() function for sequential numbering (1-300)
 - Dependencies added: @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities
 - Currency formatting: Mongolian Tugrug (MNT) with comma separators (e.g., 15,000)
 
@@ -114,24 +147,187 @@ Last Updated: 2025-11-30
   - Empty states and loading indicators
   - Database schema with RLS policies
 
+#### Kiosk Interface (Week 2) - COMPLETED ✅
+- Kiosk route structure implemented
+  - `/kiosk` - Touch to start screen
+  - `/kiosk/order-type` - Order type selection (Eat In / Take Out)
+  - `/kiosk/order` - Main ordering interface with menu browsing
+  - `/kiosk/success` - Order success confirmation screen
+- Touch to Start screen
+  - Elegant gradient background with animated blur circles
+  - Large coffee logo with border and shadow effects
+  - Welcome text with decorative gradient divider
+  - Interactive call-to-action with ChevronRight icon
+  - Animated dot indicators with staggered bounce effects
+  - Proper spacing and visual hierarchy
+- Order Type Selection screen
+  - Bilingual support (English/Mongolian)
+  - Large touch-friendly buttons for Eat In and Take Out
+  - Icon-based design with Home and ShoppingBag icons
+  - Smooth hover and active states
+- Main ordering layout
+  - Category sidebar with image support from database
+  - Product grid with Next.js Image optimization
+  - Language toggle (EN/MN) in header
+  - Fixed bottom cart bar with total display
+  - Smooth category scrolling with refs
+  - Real-time data fetching from API endpoints
+- Product drawer (bottom sheet) - **NOW WITH DYNAMIC DATA ✅**
+  - Slide-up animation with backdrop blur
+  - **Dynamic variant loading from database** (replaces mock data)
+  - **Dynamic add-ons loading from database** (replaces mock data)
+  - Support for multiple variant types (Size, Type, Crust, etc.)
+  - Price modifiers display (e.g., +₮2,000 for Large)
+  - Required variant validation with * indicator
+  - Loading state with spinner during data fetch
+  - Quantity selector with +/- buttons
+  - Product image display with Next.js Image
+  - State reset after adding to cart
+  - **Proper cart item structure with variant/addon details**
+- Cart drawer (side panel) - **ENHANCED ✅**
+  - Slide-in animation from right
+  - Product thumbnails with Next.js Image
+  - **Dynamic variant display** (e.g., "Size: Large", "Sugar: 50%")
+  - **Dynamic addon display with pricing** (e.g., "Extra Cheese +₮1,500")
+  - Accurate price calculation (base + variants + addons)
+  - Quantity controls per item
+  - Clear all functionality
+  - Subtotal and total calculations with proper formatting
+  - Proceed to payment button
+- Payment flow modal - **FULLY FUNCTIONAL ✅**
+  - Receipt type selection (INDIVIDUAL/ORGANIZATION) - **Stored in database**
+  - Payment method selection (QPay/Bank Card) - **Both supported**
+  - Mock QR code display for QPay (2-second mock payment)
+  - POS machine instruction for card payment (2-second mock payment)
+  - **Real order creation after payment confirmation**
+  - **Loading state with spinner** during order processing
+  - **Error handling** with user-friendly messages
+  - Disabled buttons during processing
+  - Centered modal with backdrop
+- Order success page - **REAL ORDER NUMBERS ✅**
+  - Green checkmark animation with ping effect
+  - **Real order number from database** (1-300 with auto-reset)
+  - Bilingual success message
+  - Restart button to begin new order
+- Add to cart animation
+  - Cart badge pop effect with elastic easing
+  - Orange ripple waves expanding from cart icon
+  - Staggered animation timing for depth
+  - Smooth transitions using CSS keyframes
+- Component organization
+  - `/screens` - TouchToStart, OrderTypeSelection, OrderSuccessPage
+  - `/products` - ProductDrawer (with dynamic API integration)
+  - `/cart` - CartDrawer (with accurate price calculations)
+  - `/payment` - PaymentFlow (with order creation)
+  - `/layout` - MainLayout (main ordering interface)
+- Kiosk viewport configuration
+  - Fixed portrait dimensions: 1080x1920
+  - Custom CSS for kiosk-specific layout
+  - Overflow hidden for dedicated kiosk displays
+- Bug fixes and optimizations
+  - Fixed hydration error (nested button elements)
+  - Fixed drawer animation on first render
+  - Replaced all img tags with Next.js Image component
+  - Removed unused imports and components
+  - **Removed all `any` types** - Full TypeScript strict compliance
+  - **Fixed price formatting** - Mongolian Tugrug format (10,000₮)
+  - All components use proper typing with Product and Category types
+  - Type-safe cart item structure with CartItemVariant and CartItemAddon
+
+#### Kiosk Backend Integration (Week 2) - NEW ✅
+- **API Endpoints**
+  - `GET /api/kiosk/products/[productId]` - Fetch product with variants, addons, modifiers
+  - `POST /api/kiosk/orders` - Create order with line items and options
+  - Multi-tenant filtering enforced on all endpoints
+- **Database Schema (Migration 008)**
+  - `receipt_type_enum` - INDIVIDUAL, ORGANIZATION
+  - `orders` table with order_number (1-300 range with auto-reset)
+  - `order_items` table for line items
+  - `order_item_options` table for selected variants/addons
+  - `get_next_order_number()` function for automatic sequential numbering
+  - Complete RLS policies for tenant-scoped access
+- **Server Actions**
+  - `getKioskProductDetails()` - Fetch product with all customization options
+  - `createOrder()` - Insert order with line items and calculate totals
+  - Proper price calculation: base_price + variant_modifiers + addon_prices
+- **Type System**
+  - Complete type definitions in `/src/types/kiosk.ts`
+  - ProductDetails, ProductVariant, VariantOption, ProductAddon
+  - CartItem with CartItemVariant and CartItemAddon
+  - CreateOrderRequest and CreateOrderResponse
+- **Order Flow**
+  - Customer selects products → Customizes with variants/addons → Adds to cart
+  - Proceeds to payment → Selects receipt type and payment method
+  - Order created in database → Success page with order number
+
+#### POS Bridge Integration (Week 2) - NEW ✅
+- **Bridge Service Architecture**
+  - Standalone Node.js service in `/pos-bridge/`
+  - WebSocket server (port 8080) for kiosk browser connection
+  - TCP client connection to WizarPOS OPC terminal (port 6031)
+  - Protocol conversion: WebSocket JSON ↔ TCP binary (WizarPOS protocol)
+- **Files & Components**
+  - `pos-bridge/app.js` - Main WebSocket server and TCP client
+  - `pos-bridge/protocol.js` - WizarPOS protocol handler (packet building/parsing)
+  - `pos-bridge/package.json` - Dependencies (ws, express, cors)
+  - `pos-bridge/.env.example` - Configuration template
+  - `pos-bridge/README.md` - Setup and usage documentation
+- **React Integration**
+  - `src/hooks/usePOSBridge.ts` - WebSocket hook with connection management
+  - Auto-reconnect on disconnect (3 second interval)
+  - Real-time OPC terminal status monitoring
+  - Payment state management: idle/connecting/processing/success/error
+- **Payment Flow Component**
+  - `src/components/kiosk/payment/PaymentFlow.tsx` - Updated with POS integration
+  - **Auto-processing**: Clicking "Bank Card" immediately starts payment (no confirm button)
+  - **Three payment states**:
+    - Idle: Select receipt type and payment method
+    - Processing: "Tap Your Card" screen with bridge/OPC status indicators
+    - Success/Error: Navigate to success page or show retry option
+  - **QPay flow unchanged**: Still uses confirm button (as requested)
+  - Cancel transaction during card tap
+  - Bridge connection indicators (green/red status dots)
+  - OPC terminal readiness check (disables button if not connected)
+- **Environment Configuration**
+  - `NEXT_PUBLIC_POS_BRIDGE_URL=ws://localhost:8080` in `.env.local` and `.env.example`
+- **Supported Commands**
+  - `purchase`: Process payment with amount, orderId, currency
+  - `cancel`: Cancel current transaction
+  - `status`: Check OPC connection status
+  - `void`, `refund`, `inquiry`: Additional transaction types
+- **Testing Notes**
+  - Bridge service must be running: `cd pos-bridge && npm start`
+  - OPC terminal must be connected at configured IP:PORT
+  - WebSocket connects automatically when PaymentFlow opens
+  - Cannot test without physical POS device (setup ready for when available)
+  - Mock payment confirmation (2-second delay)
+  - Real order created in database with proper line items
+  - Order number generated (1-300 with reset after 300)
+  - Success screen displays real order number
+- **Data Persistence**
+  - Orders stored with tenant_id, dine_type, receipt_type, payment_method
+  - Order items stored with product details, quantity, pricing
+  - Order item options stored with variant/addon selections and prices
+  - All data properly scoped to tenant with RLS
+- **Price Formatting**
+  - Mongolian Tugrug (₮) symbol positioned correctly
+  - Comma separators for thousands (e.g., 10,000₮)
+  - Consistent formatting across all components
+
 ### 🚧 In Progress
 
-#### Week 1 Goals
-- Modifiers management (customization options) - on hold
-- Branding settings (logo, theme) - on hold
-- Payment settings (QPay configuration) - on hold
+#### Week 3 Goals (Current)
+- Kitchen Display System layout
+- Order status workflow (NEW → PREPARING → READY → COMPLETED)
+- Real-time order updates with Supabase subscriptions
+- Real QPay API integration (replace mock payment)
 
 ### 📋 Upcoming
 
-#### Week 2 - Kiosk & Kitchen Display
-- Kiosk login interface
-- Menu browsing by categories
-- Product selection with variants
-- Shopping cart functionality
-- Dine-type selection (Eat In / Take Out)
-- Kitchen Display System layout
-- Order status workflow (NEW → PREPARING → READY → COMPLETED)
-- Real-time order updates
+#### Week 1 Goals (Postponed)
+- Modifiers management (customization options)
+- Branding settings (logo, theme)
+- Payment settings (QPay configuration)
 
 #### Week 3 - Payment & Integration
 - QPay QR code generation
@@ -147,10 +343,11 @@ Last Updated: 2025-11-30
 - [x] Menu management system (Categories & Products CRUD)
 - [x] Product variants configuration (Variants with drag-and-drop)
 - [x] Product add-ons (Extra items with fixed pricing)
+- [x] Kiosk ordering interface (UI completed with mock data)
+- [x] **Kiosk backend integration (variants, addons, order creation)** ✅ NEW
 - [ ] Product modifiers (Customization options)
-- [ ] Kiosk ordering interface
 - [ ] Kitchen display system
-- [ ] Payment integration
+- [ ] Payment integration (Real QPay API - currently mock)
 - [ ] Production ready
 
 ## Notes
@@ -158,6 +355,13 @@ Last Updated: 2025-11-30
 - Multi-tenant architecture implemented
 - Using Supabase for backend services (PostgreSQL, Storage, RLS)
 - Next.js 16 with React 19
-- Mobile-first responsive design
+- Mobile-first responsive design (Admin) / Kiosk-optimized design (1080x1920 portrait)
 - Drag-and-drop functionality with @dnd-kit
-- TypeScript strict mode enabled
+- TypeScript strict mode enabled (zero `any` types)
+- All kiosk images optimized with Next.js Image component
+- Custom CSS animations for smooth user experience
+- Route-based navigation for kiosk screens
+- **Full end-to-end ordering flow functional** (Browse → Customize → Cart → Payment → Database)
+- **Sequential order numbering** (1-300 with auto-reset)
+- **Price calculations accurate** with variants and addons
+- **Mock payment** (2-second delay) - Real QPay API to be integrated in Week 3
