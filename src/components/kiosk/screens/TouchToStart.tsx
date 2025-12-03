@@ -10,7 +10,7 @@ export const TouchToStart = ({ onStart }: TouchToStartProps) => {
   return (
     <button
       onClick={onStart}
-      className="group relative flex h-full w-full items-center justify-center bg-gradient-to-br from-orange-50 via-white to-orange-100 overflow-hidden active:scale-[0.985] transition-all"
+      className="group relative flex h-full w-full items-center justify-center"
     >
       {/* Soft floating background glow */}
       <div className="absolute inset-0 pointer-events-none">
@@ -20,7 +20,7 @@ export const TouchToStart = ({ onStart }: TouchToStartProps) => {
 
       <div className="relative flex flex-col items-center text-center">
         {/* Logo */}
-        <div className="mb-28 flex h-64 w-64 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-orange-500 shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-110 group-active:scale-105">
+        <div className="mb-28 flex h-64 w-64 items-center justify-center rounded-full bg-linear-to-br from-orange-300 to-orange-500 shadow-[0_20px_60px_rgba(0,0,0,0.25)] transition-transform group-hover:scale-110 group-active:scale-105">
           <Coffee className="h-32 w-32 text-white drop-shadow-lg" />
         </div>
 

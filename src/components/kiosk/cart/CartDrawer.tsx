@@ -89,14 +89,14 @@ export const KioskCartDrawer = ({
                 </p>
               </div>
             ) : (
-              <div className="flex flex-col gap-6">
+              <div className="flex flex-col gap-4">
                 {items.map((item) => (
                   <div
                     key={item.id}
-                    className="rounded-3xl border-2 border-orange-200 bg-white p-6 shadow-sm transition-all hover:shadow-md"
+                    className="rounded-xl border-2 border-neutral-200 bg-white p-4 shadow-sm transition-all hover:shadow-md"
                   >
-                    <div className="mb-4 flex gap-4">
-                      <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-xl border-2 border-orange-200">
+                    <div className="mb-3 flex gap-3">
+                      <div className="relative h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg">
                         <Image
                           src={item.image || "/placeholder.svg"}
                           alt={item.name}
@@ -104,80 +104,90 @@ export const KioskCartDrawer = ({
                           className="object-cover"
                         />
                       </div>
-                      <div className="flex flex-1 flex-col">
+                      <div className="flex flex-1 flex-col justify-between">
                         <div className="flex items-start justify-between">
-                          <h3 className="text-2xl font-bold text-neutral-900">
+                          <h3 className="text-xl font-bold text-neutral-900">
                             {item.name}
                           </h3>
                           <button
                             onClick={() => onUpdateQuantity(item.id, 0)}
-                            className="rounded-full p-2 text-red-500 transition-colors hover:bg-red-50"
+                            className="rounded-lg p-1.5 text-neutral-400 transition-colors hover:bg-red-50 hover:text-red-500"
                           >
-                            <Trash2 className="h-6 w-6" />
+                            <Trash2 className="h-5 w-5" />
                           </button>
+                        </div>
+                        <div className="text-lg font-bold text-orange-500">
+                          ₮{item.base_price.toLocaleString()}
                         </div>
                       </div>
                     </div>
 
-                    {item.variants.length > 0 && (
-                      <div className="mb-3 flex flex-wrap gap-2 text-lg text-neutral-600">
-                        {item.variants.map((variant, idx) => (
-                          <span
-                            key={idx}
-                            className="rounded-full border-2 border-orange-200 bg-orange-50 px-4 py-1 font-semibold text-orange-600"
-                          >
-                            {variant.option_name}
-                          </span>
-                        ))}
-                      </div>
-                    )}
-
-                    {item.addons.length > 0 && (
-                      <div className="mb-4 space-y-2">
-                        {item.addons.map((addon, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between text-lg text-neutral-700"
-                          >
-                            <div className="flex items-center gap-2">
-                              <span className="text-orange-500">✓</span>
-                              <span className="font-semibold">
-                                {addon.name}
+                    {(item.variants.length > 0 || item.addons.length > 0) && (
+                      <div className="mb-3 space-y-1.5 rounded-lg bg-neutral-50 p-3">
+                        {item.variants.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5">
+                            {item.variants.map((variant, idx) => (
+                              <span
+                                key={idx}
+                                className="rounded-md bg-orange-100 px-2 py-0.5 text-sm font-medium text-orange-700"
+                              >
+                                {variant.option_name}
+                                {variant.price_modifier !== 0 && (
+                                  <span className="ml-1 text-xs">
+                                    {variant.price_modifier > 0 ? "+" : ""}
+                                    {variant.price_modifier.toLocaleString()}₮
+                                  </span>
+                                )}
                               </span>
-                            </div>
-                            <span className="font-bold text-orange-500">
-                              +₮{addon.price.toLocaleString()}
-                            </span>
+                            ))}
                           </div>
-                        ))}
+                        )}
+
+                        {item.addons.length > 0 && (
+                          <div className="space-y-1">
+                            {item.addons.map((addon, idx) => (
+                              <div
+                                key={idx}
+                                className="flex items-center justify-between text-sm text-neutral-700"
+                              >
+                                <span className="font-medium">
+                                  + {addon.name}
+                                </span>
+                                <span className="font-semibold text-orange-600">
+                                  {addon.price.toLocaleString()}₮
+                                </span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
 
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-between border-t border-neutral-200 pt-3">
+                      <div className="flex items-center gap-3">
                         <Button
                           size="icon"
-                          className="h-12 w-12 rounded-full border-2 border-orange-300 bg-white text-orange-600 hover:bg-orange-50"
+                          className="h-10 w-10 rounded-lg border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100"
                           onClick={() =>
                             onUpdateQuantity(item.id, item.quantity - 1)
                           }
                         >
-                          <Minus className="h-6 w-6" />
+                          <Minus className="h-4 w-4" />
                         </Button>
-                        <span className="w-12 text-center text-3xl font-black text-neutral-900">
+                        <span className="w-10 text-center text-2xl font-bold text-neutral-900">
                           {item.quantity}
                         </span>
                         <Button
                           size="icon"
-                          className="h-12 w-12 rounded-full border-2 border-orange-300 bg-white text-orange-600 hover:bg-orange-50"
+                          className="h-10 w-10 rounded-lg border border-neutral-300 bg-white text-neutral-700 hover:bg-neutral-100"
                           onClick={() =>
                             onUpdateQuantity(item.id, item.quantity + 1)
                           }
                         >
-                          <Plus className="h-6 w-6" />
+                          <Plus className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="text-3xl font-black text-orange-500">
+                      <div className="text-2xl font-black text-orange-500">
                         ₮
                         {(
                           calculateItemPrice(item) * item.quantity

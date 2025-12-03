@@ -12,6 +12,7 @@ import { useProductDetailsCache } from "@/hooks/useProductDetailsCache";
 import type { Category } from "@/lib/admin/categories/types";
 import type { Product } from "@/lib/admin/products/types";
 import type { CartItem } from "@/types/kiosk";
+import { BasketIcon } from "@phosphor-icons/react";
 
 type KioskMainLayoutProps = {
   orderType: "eatIn" | "takeOut" | null;
@@ -172,8 +173,8 @@ export const KioskMainLayout = ({
                 "group flex flex-col items-center justify-center gap-3 rounded-2xl border-2 p-6 transition-all duration-200",
                 "hover:scale-105 active:scale-95",
                 selectedCategory === category.id
-                  ? "border-orange-500 bg-orange-50 text-orange-600 shadow-sm"
-                  : "border-orange-200 bg-white text-neutral-700 hover:border-orange-300 hover:bg-orange-50"
+                  ? "border-orange-500 text-orange-500 shadow-sm"
+                  : "border-orange-200 bg-white text-neutral-700"
               )}
             >
               {category.image_url ? (
@@ -198,7 +199,7 @@ export const KioskMainLayout = ({
         </div>
 
         <div className="flex flex-1 flex-col overflow-hidden">
-          <div className="flex-1 overflow-y-auto px-16 py-12 pb-[160px]">
+          <div className="flex-1 overflow-y-auto px-16 py-12 pb-40">
             {categories.map((category) => {
               const categoryProducts = productsByCategory[category.id] || [];
               if (categoryProducts.length === 0) return null;
@@ -228,7 +229,7 @@ export const KioskMainLayout = ({
                           onClick={() => handleProductClick(product)}
                           onMouseEnter={() => prefetchProduct(product.id)}
                           onTouchStart={() => prefetchProduct(product.id)}
-                          className="group relative flex cursor-pointer flex-col overflow-hidden rounded-3xl border-2 border-orange-200 bg-white shadow-sm transition-all hover:scale-[1.02] hover:border-orange-400 hover:shadow-lg active:scale-[0.98]"
+                          className="group relative flex cursor-pointer flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:scale-[1.02] active:scale-[0.98]"
                         >
                           <div className="relative aspect-square w-full overflow-hidden bg-white">
                             <Image
@@ -244,7 +245,8 @@ export const KioskMainLayout = ({
                               {product.name}
                             </h3>
                             <div className="h-14 gap-2 rounded-full border-2 border-orange-500 bg-orange-500 px-8 text-xl font-black text-white shadow-sm flex items-center justify-center">
-                              <span className="text-2xl">+</span> {Number(product.base_price).toLocaleString()}₮
+                              <span className="text-2xl">+</span>{" "}
+                              {Number(product.base_price).toLocaleString()}₮
                             </div>
                           </div>
                         </div>
@@ -261,7 +263,10 @@ export const KioskMainLayout = ({
       <div className="fixed bottom-0 left-0 right-0 z-30 flex items-center justify-between border-t-2 border-orange-200 bg-white px-16 py-6 shadow-[0_-2px_12px_rgba(0,0,0,0.05)]">
         <div className="flex items-center gap-6">
           <div className="relative">
-            <ShoppingCart className="h-12 w-12 text-orange-500 transition-transform duration-300" />
+            <BasketIcon
+              size={48}
+              className="text-orange-500 transition-transform duration-300"
+            />
 
             {/* Cart Badge with Animation */}
             {cartItemCount > 0 && (
@@ -285,8 +290,12 @@ export const KioskMainLayout = ({
             )}
           </div>
           <div className="flex flex-col">
-            <span className="text-base font-semibold text-neutral-600">Total</span>
-            <span className="text-2xl font-black text-neutral-900">{total.toLocaleString()}₮</span>
+            <span className="text-base font-semibold text-neutral-600">
+              Total
+            </span>
+            <span className="text-2xl font-black text-neutral-900">
+              {total.toLocaleString()}₮
+            </span>
           </div>
         </div>
 
