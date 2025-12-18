@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { EmptyState, DeleteItemDialog } from "@/components/common";
 import { ProductDialog } from "./ProductDialog";
 import { ProductsTableView } from "./ProductsTableView";
+import { ProductDetailsSheet } from "./ProductDetailsSheet";
 import {
   toggleProductStatus,
   deleteProduct,
@@ -23,7 +24,9 @@ const ITEMS_PER_PAGE = 10;
 export const ProductsTable = ({ products, categories }: ProductsTableProps) => {
   const [productDialogOpen, setProductDialogOpen] = useState(false);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [detailsSheetOpen, setDetailsSheetOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<Product | undefined>();
+  const [viewProduct, setViewProduct] = useState<Product | null>(null);
   const [togglingId, setTogglingId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<
@@ -83,6 +86,11 @@ export const ProductsTable = ({ products, categories }: ProductsTableProps) => {
     setDeleteDialogOpen(true);
   };
 
+  const handleViewClick = (product: Product) => {
+    setViewProduct(product);
+    setDetailsSheetOpen(true);
+  };
+
   const handleToggleStatus = async (product: Product) => {
     setTogglingId(product.id);
 
@@ -139,6 +147,7 @@ export const ProductsTable = ({ products, categories }: ProductsTableProps) => {
         onToggleStatus={handleToggleStatus}
         onEdit={handleEditClick}
         onDelete={handleDeleteClick}
+        onView={handleViewClick}
         onCreateClick={handleCreateClick}
         searchQuery={searchQuery}
         onSearchChange={(value) => {
@@ -183,6 +192,13 @@ export const ProductsTable = ({ products, categories }: ProductsTableProps) => {
           }}
         />
       )}
+
+      <ProductDetailsSheet
+        open={detailsSheetOpen}
+        onOpenChange={setDetailsSheetOpen}
+        product={viewProduct}
+        categories={categories}
+      />
     </>
   );
 };

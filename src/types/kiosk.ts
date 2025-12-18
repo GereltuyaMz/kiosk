@@ -68,4 +68,6 @@ export type CreateOrderRequest = {
 export type CreateOrderResponse = {
   order_id: string;
   order_number: number;
+  ebarimt_lottery?: string;
+  ebarimt_qr_data?: string;
 };

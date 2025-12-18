@@ -18,6 +18,8 @@ export default async function KioskLayout({
   }
 
   return (
-    <div className="h-screen w-screen overflow-hidden bg-white">{children}</div>
+    <div className="kiosk-container h-screen w-screen overflow-hidden">
+      {children}
+    </div>
   );
 }

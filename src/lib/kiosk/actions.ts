@@ -2,6 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server";
 import { verifyAuthOrThrow, handleError, type ActionResult } from "@/lib/admin/utils";
+import { generateEbarimtReceipt, addToRetryQueue } from "@/lib/ebarimt/actions";
 import type { Category } from "@/lib/admin/categories/types";
 import type { Product } from "@/lib/admin/products/types";
 import type { ProductDetails, ProductVariant, VariantOption, CreateOrderRequest, CreateOrderResponse } from "@/types/kiosk";
@@ -201,10 +202,50 @@ export const createOrder = async (orderData: CreateOrderRequest): Promise<Action
       ];
 
       if (options.length > 0) {
-        const { error: optionsError } = await supabase.from("order_item_options").insert(options);
+        const { error: optionsError} = await supabase.from("order_item_options").insert(options);
 
         if (optionsError) throw new Error("Failed to create order item options");
       }
+    }
+
+    let ebarimtData: { lottery?: string; qrData?: string } = {};
+
+    try {
+      const receiptData = await generateEbarimtReceipt(orderData, tenantId);
+
+      if (receiptData) {
+        const { error: updateError } = await supabase
+          .from("orders")
+          .update({
+            ebarimt_id: receiptData.ebarimt_id,
+            ebarimt_lottery: receiptData.ebarimt_lottery,
+            ebarimt_qr_data: receiptData.ebarimt_qr_data,
+            ebarimt_response: receiptData.ebarimt_response,
+            ebarimt_created_at: receiptData.ebarimt_created_at,
+          })
+          .eq("id", order.id);
+
+        if (!updateError) {
+          ebarimtData = {
+            lottery: receiptData.ebarimt_lottery,
+            qrData: receiptData.ebarimt_qr_data,
+          };
+        }
+      }
+    } catch (ebarimtError) {
+      await supabase
+        .from("orders")
+        .update({
+          ebarimt_error: ebarimtError instanceof Error ? ebarimtError.message : "Unknown error",
+        })
+        .eq("id", order.id);
+
+      await addToRetryQueue(
+        order.id,
+        tenantId,
+        orderData,
+        ebarimtError instanceof Error ? ebarimtError.message : "Unknown error"
+      );
     }
 
     return {
@@ -212,6 +253,8 @@ export const createOrder = async (orderData: CreateOrderRequest): Promise<Action
       data: {
         order_id: order.id,
         order_number: order.order_number,
+        ebarimt_lottery: ebarimtData.lottery,
+        ebarimt_qr_data: ebarimtData.qrData,
       },
     };
   } catch (error) {

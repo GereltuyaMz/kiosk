@@ -7,8 +7,8 @@ type EmptyStateProps = {
   icon: LucideIcon;
   title: string;
   description: string;
-  buttonText: string;
-  onButtonClick: () => void;
+  buttonText?: string;
+  onButtonClick?: () => void;
 };
 
 export const EmptyState = ({
@@ -25,9 +25,11 @@ export const EmptyState = ({
       </div>
       <h3 className="mt-4 text-lg font-semibold">{title}</h3>
       <p className="mt-2 text-sm text-muted-foreground">{description}</p>
-      <Button onClick={onButtonClick} className="mt-6 cursor-pointer">
-        {buttonText}
-      </Button>
+      {buttonText && onButtonClick && (
+        <Button onClick={onButtonClick} className="mt-6 cursor-pointer">
+          {buttonText}
+        </Button>
+      )}
     </div>
   );
 };

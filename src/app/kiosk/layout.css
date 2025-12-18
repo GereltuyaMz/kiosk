@@ -9,8 +9,12 @@
   }
 }
 
-/* Add to Cart Animation Keyframes */
+/* Kiosk Container Base Styling - Premium Light Theme */
+.kiosk-container {
+  background: linear-gradient(165deg, #fdfcfa 0%, #faf8f5 50%, #f7f5f2 100%);
+}
 
+/* Add to Cart Animation Keyframes */
 @keyframes badgePop {
   0% {
     transform: scale(1);
@@ -31,5 +35,197 @@
   100% {
     transform: scale(2.5);
     opacity: 0;
+  }
+}
+
+/* ============================================
+   Touch to Start Screen Animations
+   ============================================ */
+
+/* Floating particles drift slowly */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) translateX(0) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-30px) translateX(15px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(-10px) translateX(-10px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(-40px) translateX(5px) rotate(2deg);
+  }
+}
+
+/* Gentle pulse for logo ring */
+@keyframes pulse-ring {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+}
+
+/* Outer ring slow rotation */
+@keyframes rotate-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Fade up entrance */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Scale fade in */
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Shimmer effect for CTA */
+@keyframes shimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+/* Gentle glow pulse - Light theme version */
+@keyframes glow-pulse {
+  0%, 100% {
+    box-shadow: 0 20px 60px rgba(194, 120, 50, 0.25),
+                0 8px 24px rgba(194, 120, 50, 0.15);
+  }
+  50% {
+    box-shadow: 0 24px 70px rgba(194, 120, 50, 0.35),
+                0 12px 32px rgba(194, 120, 50, 0.2);
+  }
+}
+
+/* Subtle bounce for chevron */
+@keyframes bounce-right {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translateX(12px);
+  }
+}
+
+/* Background gradient shift */
+@keyframes gradient-shift {
+  0%, 100% {
+    opacity: 0.15;
+    transform: scale(1) translate(0, 0);
+  }
+  33% {
+    opacity: 0.2;
+    transform: scale(1.1) translate(20px, -20px);
+  }
+  66% {
+    opacity: 0.12;
+    transform: scale(0.95) translate(-10px, 10px);
+  }
+}
+
+/* Text reveal with clip */
+@keyframes text-reveal {
+  from {
+    clip-path: inset(0 100% 0 0);
+    opacity: 0;
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    opacity: 1;
+  }
+}
+
+/* Particle fade in */
+@keyframes particle-in {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: var(--particle-opacity, 0.6);
+    transform: scale(1);
+  }
+}
+
+/* Card lift animation for order type selection */
+@keyframes card-lift {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Elegant icon bounce */
+@keyframes icon-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Loading shimmer for skeleton states */
+@keyframes loading-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+/* Soft float for decorative elements */
+@keyframes soft-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-15px) rotate(3deg);
+  }
+}
+
+/* Entrance scale for buttons */
+@keyframes button-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
   }
 }

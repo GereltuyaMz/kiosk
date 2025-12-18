@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import { Pencil, Trash2, ImageIcon } from "lucide-react";
+import { Pencil, Trash2, ImageIcon, Expand } from "lucide-react";
 import {
   Table,
   TableBody,
@@ -31,6 +31,7 @@ type ProductsTableViewProps = {
   onToggleStatus: (product: Product) => void;
   onEdit: (product: Product) => void;
   onDelete: (product: Product) => void;
+  onView: (product: Product) => void;
   onCreateClick: () => void;
   searchQuery: string;
   onSearchChange: (value: string) => void;
@@ -50,6 +51,7 @@ export const ProductsTableView = ({
   onToggleStatus,
   onEdit,
   onDelete,
+  onView,
   onCreateClick,
   searchQuery,
   onSearchChange,
@@ -183,6 +185,15 @@ export const ProductsTableView = ({
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onView(product)}
+                        title="View Details"
+                        className="cursor-pointer"
+                      >
+                        <Expand className="h-4 w-4" />
+                      </Button>
                       <Button
                         variant="ghost"
                         size="icon"

@@ -1,10 +1,33 @@
 # Project Progress
 
-Last Updated: 2025-12-03
+Last Updated: 2025-12-17
 
-## Current Stage: Week 2 - Kiosk Backend Integration (Completed)
+## Current Stage: Week 3 - Admin Orders & Kitchen Display System (In Progress)
 
-### 🎉 Latest Updates (2025-12-03)
+### 🎉 Latest Updates (2025-12-17)
+
+**Admin Orders Management - COMPLETED** ✅
+- ✅ Full orders table with date filtering (Today, Yesterday, Last 7 Days, This Month, Custom Range)
+- ✅ Status filtering (All, NEW, PREPARING, READY, COMPLETED)
+- ✅ Search by order number
+- ✅ Pagination (20 orders per page)
+- ✅ Order details side panel with items, variants, addons, payment info
+- ✅ Admin actions: Change status (Start → Ready → Complete), Cancel order
+- ✅ Real-time updates via Supabase Realtime subscriptions
+- ✅ Toast notifications on new/updated orders
+- ✅ eBarimt receipt info display
+- ✅ Responsive design matching admin panel style
+
+**Product Details Sheet - COMPLETED** ✅
+- ✅ Expand icon in products table actions column
+- ✅ Product detail sheet with image, name, status, description
+- ✅ Dynamic variants and addons loading from database
+- ✅ Price, category, display order information
+- ✅ Timeline section (created/updated dates)
+
+---
+
+### Previous Updates (2025-12-03)
 
 **POS Bridge Integration - COMPLETED**
 - ✅ WebSocket-based POS terminal integration for bank card payments
@@ -314,12 +337,50 @@ Last Updated: 2025-12-03
   - Comma separators for thousands (e.g., 10,000₮)
   - Consistent formatting across all components
 
+#### Admin Orders Management (Week 3) - NEW ✅
+- **Files & Structure**
+  - `src/lib/admin/orders/types.ts` - Order, OrderItem, OrderStatus types
+  - `src/lib/admin/orders/utils.ts` - Date filtering utilities, formatters
+  - `src/lib/admin/orders/actions.ts` - Server actions (getOrders, updateStatus, cancel)
+  - `src/components/admin/orders/` - 7 component files with barrel exports
+  - `src/hooks/useOrdersRealtime.ts` - Supabase Realtime subscription hook
+- **Components**
+  - `OrdersTable.tsx` - Container with state management & realtime
+  - `OrdersTableView.tsx` - Table presentation with filters
+  - `OrderFilter.tsx` - Date/status dropdowns + search
+  - `OrderDetailsSheet.tsx` - Side panel for order details
+  - `OrderStatusBadge.tsx` - Colored status badges (NEW=blue, PREPARING=yellow, READY=green, COMPLETED=gray)
+  - `OrderItemsList.tsx` - Order items with variants/addons
+  - `OrderActions.tsx` - Status change & cancel buttons
+- **Features**
+  - Date filtering: Today, Yesterday, Last 7 Days, This Month, Custom Range
+  - Status filtering: All, NEW, PREPARING, READY, COMPLETED
+  - Search by order number (#42)
+  - Pagination (20 per page)
+  - Real-time updates via Supabase Realtime
+  - Toast notifications on new orders
+  - Order details with items, variants, addons, payment info
+  - Admin actions: Change status, Cancel order
+  - eBarimt receipt info display
+
+#### Product Details Enhancements (Week 3) - NEW ✅
+- **Product Details Sheet**
+  - `src/components/admin/products/ProductDetailsSheet.tsx` - Product detail panel
+  - `src/components/admin/products/ProductDetailsSheet.tsx` - Split into smaller components
+  - Expand icon in products table actions column
+  - Dynamic variants and addons loading from database
+  - Clean UI with proper spacing and icons
+- **Types**
+  - `ProductVariant`, `ProductAddon`, `ProductWithDetails` types added
+  - `getProductWithDetails()` server action for fetching full product data
+
 ### 🚧 In Progress
 
 #### Week 3 Goals (Current)
-- Kitchen Display System layout
-- Order status workflow (NEW → PREPARING → READY → COMPLETED)
-- Real-time order updates with Supabase subscriptions
+- ✅ Admin Orders Management (COMPLETED)
+- Kitchen Display System layout (3-column Kanban: NEW → PREPARING → READY)
+- KDS real-time updates with Supabase subscriptions
+- Touch-friendly KDS interface for kitchen staff
 - Real QPay API integration (replace mock payment)
 
 ### 📋 Upcoming
@@ -344,16 +405,17 @@ Last Updated: 2025-12-03
 - [x] Product variants configuration (Variants with drag-and-drop)
 - [x] Product add-ons (Extra items with fixed pricing)
 - [x] Kiosk ordering interface (UI completed with mock data)
-- [x] **Kiosk backend integration (variants, addons, order creation)** ✅ NEW
+- [x] Kiosk backend integration (variants, addons, order creation)
+- [x] **Admin Orders Management (date filters, status, real-time)** ✅ NEW
 - [ ] Product modifiers (Customization options)
-- [ ] Kitchen display system
+- [ ] Kitchen display system (3-column Kanban layout)
 - [ ] Payment integration (Real QPay API - currently mock)
 - [ ] Production ready
 
 ## Notes
 
 - Multi-tenant architecture implemented
-- Using Supabase for backend services (PostgreSQL, Storage, RLS)
+- Using Supabase for backend services (PostgreSQL, Storage, RLS, Realtime)
 - Next.js 16 with React 19
 - Mobile-first responsive design (Admin) / Kiosk-optimized design (1080x1920 portrait)
 - Drag-and-drop functionality with @dnd-kit
@@ -365,3 +427,5 @@ Last Updated: 2025-12-03
 - **Sequential order numbering** (1-300 with auto-reset)
 - **Price calculations accurate** with variants and addons
 - **Mock payment** (2-second delay) - Real QPay API to be integrated in Week 3
+- **Admin Orders with real-time updates** via Supabase Realtime subscriptions
+- **Reusable hooks** - `useOrdersRealtime` for live order monitoring

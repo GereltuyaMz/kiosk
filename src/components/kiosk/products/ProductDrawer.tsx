@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { X, Minus, Plus, Loader2 } from "lucide-react";
+import { X, Minus, Plus, Check, ShoppingCart } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ProductDetailsSkeleton } from "./ProductDetailsSkeleton";
 import type { CartItem, ProductVariant } from "@/types/kiosk";
@@ -41,13 +41,11 @@ export const KioskProductDrawer = ({
     const loadProductDetails = async () => {
       if (!product || !open) return;
 
-      // Check cache first for instant display
       const cached = getCachedProduct(product.id);
       if (cached) {
         setProductDetails(cached);
         setLoading(false);
 
-        // Set default variants
         const defaultVariants: Record<string, string> = {};
         cached.variants.forEach((variant: ProductVariant) => {
           if (variant.options.length > 0) {
@@ -58,7 +56,6 @@ export const KioskProductDrawer = ({
         return;
       }
 
-      // Not in cache, fetch with loading state
       setLoading(true);
       try {
         const details = await fetchProductDetails(product.id);
@@ -182,45 +179,53 @@ export const KioskProductDrawer = ({
 
   return (
     <>
+      {/* Backdrop */}
       <div
         className={cn(
-          "fixed inset-0 z-40 bg-black/30 backdrop-blur-sm transition-opacity duration-300",
+          "fixed inset-0 z-40 bg-black/25 backdrop-blur-sm transition-opacity duration-300",
           open && product ? "opacity-100" : "pointer-events-none opacity-0"
         )}
         onClick={onClose}
       />
 
+      {/* Drawer */}
       <div
         className={cn(
-          "fixed bottom-0 left-0 right-0 z-50 h-[70vh] transform rounded-t-[7rem] bg-white shadow-2xl transition-transform duration-300",
+          "fixed bottom-0 left-0 right-0 z-50 h-[72vh] transform rounded-t-[4rem] border-t border-amber-200/60 bg-gradient-to-b from-white to-amber-50/20 shadow-2xl transition-transform duration-300 ease-out",
           open && product ? "translate-y-0" : "translate-y-full"
         )}
       >
         {product && (
           <div className="flex h-full flex-col">
-            <div className="relative h-[30vh] w-full overflow-hidden rounded-t-[7rem] border-b-2 border-orange-200 bg-white">
+            {/* Image Header */}
+            <div className="relative h-[32vh] w-full overflow-hidden rounded-t-[4rem] bg-gradient-to-b from-amber-50 to-white">
               <Image
                 src={imageUrl}
                 alt={product.name}
                 fill
                 className="object-cover"
               />
+              {/* Gradient overlay at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 h-20 bg-gradient-to-t from-white to-transparent" />
+              {/* Close button */}
               <Button
                 size="icon"
                 variant="ghost"
-                className="absolute right-11 top-10 h-14 w-14 rounded-full border-2 border-orange-200 bg-white"
+                className="absolute right-8 top-8 h-12 w-12 rounded-full border border-amber-200/60 bg-white/90 text-neutral-600 shadow-sm backdrop-blur-sm hover:bg-white hover:text-amber-700"
                 onClick={onClose}
               >
-                <X size={20} />
+                <X className="h-5 w-5" />
               </Button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-10 py-8">
-              <div className="mb-8">
-                <h2 className="mb-2 text-4xl font-bold text-neutral-900">
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-10 py-6">
+              {/* Product Info */}
+              <div className="mb-6">
+                <h2 className="mb-2 font-display text-3xl font-semibold text-neutral-800">
                   {product.name}
                 </h2>
-                <p className="text-2xl font-semibold text-orange-500">
+                <p className="font-body text-xl font-medium text-amber-600">
                   {basePrice.toLocaleString()}₮
                 </p>
               </div>
@@ -229,17 +234,18 @@ export const KioskProductDrawer = ({
                 <ProductDetailsSkeleton />
               ) : productDetails ? (
                 <>
+                  {/* Variants */}
                   {productDetails?.variants.map((variant) => (
-                    <div key={variant.id} className="my-8">
-                      <h3 className="mb-4 text-xl font-bold text-neutral-900">
+                    <div key={variant.id} className="mb-6">
+                      <h3 className="mb-3 font-body text-lg font-semibold text-neutral-800">
                         {variant.name}
                         {variant.is_required && (
-                          <span className="ml-2 text-base text-red-500">*</span>
+                          <span className="ml-2 text-sm text-red-500">*</span>
                         )}
                       </h3>
                       <div
                         className={cn(
-                          "grid gap-3",
+                          "grid gap-2.5",
                           variant.options.length <= 3
                             ? "grid-cols-3"
                             : variant.options.length === 4
@@ -247,127 +253,131 @@ export const KioskProductDrawer = ({
                             : "grid-cols-5"
                         )}
                       >
-                        {variant.options.map((option) => (
-                          <button
-                            key={option.id}
-                            onClick={() =>
-                              setSelectedVariants((prev) => ({
-                                ...prev,
-                                [variant.id]: option.id,
-                              }))
-                            }
-                            className={cn(
-                              "rounded-xl border-2 py-3 text-base font-semibold transition-all",
-                              selectedVariants[variant.id] === option.id
-                                ? "border-orange-500 bg-orange-50 text-orange-600"
-                                : "border-orange-200 bg-white text-neutral-700 hover:border-orange-300 hover:bg-orange-50"
-                            )}
-                          >
-                            <div>{option.name}</div>
-                            {option.price_modifier !== 0 && (
-                              <span className="text-sm">
-                                {option.price_modifier > 0 ? "+" : ""}
-                                {option.price_modifier.toLocaleString()}
-                              </span>
-                            )}
-                          </button>
-                        ))}
+                        {variant.options.map((option) => {
+                          const isSelected =
+                            selectedVariants[variant.id] === option.id;
+                          return (
+                            <button
+                              key={option.id}
+                              onClick={() =>
+                                setSelectedVariants((prev) => ({
+                                  ...prev,
+                                  [variant.id]: option.id,
+                                }))
+                              }
+                              className={cn(
+                                "relative rounded-xl border-2 py-3 font-body text-sm font-medium transition-all",
+                                isSelected
+                                  ? "border-amber-500 bg-gradient-to-b from-amber-50 to-white text-amber-700 shadow-sm"
+                                  : "border-amber-200/60 bg-white text-neutral-600 hover:border-amber-300 hover:bg-amber-50/50"
+                              )}
+                            >
+                              {isSelected && (
+                                <div className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-500">
+                                  <Check className="h-3 w-3 text-white" />
+                                </div>
+                              )}
+                              <div>{option.name}</div>
+                              {option.price_modifier !== 0 && (
+                                <span className="text-xs text-amber-600">
+                                  {option.price_modifier > 0 ? "+" : ""}
+                                  {option.price_modifier.toLocaleString()}₮
+                                </span>
+                              )}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
 
+                  {/* Addons */}
                   {productDetails && productDetails.addons.length > 0 && (
-                    <div className="mb-8">
-                      <h3 className="mb-4 text-xl font-bold text-neutral-900">
+                    <div className="mb-6">
+                      <h3 className="mb-3 font-body text-lg font-semibold text-neutral-800">
                         Add-ons
                       </h3>
-                      <div className="space-y-3">
-                        {productDetails.addons.map((addon) => (
-                          <button
-                            key={addon.id}
-                            onClick={() => handleToggleAddon(addon.id)}
-                            className={cn(
-                              "flex w-full items-center justify-between rounded-xl border-2 px-6 py-4 transition-all",
-                              selectedAddons.includes(addon.id)
-                                ? "border-orange-500 bg-orange-50"
-                                : "border-orange-200 bg-white hover:border-orange-300 hover:bg-orange-50"
-                            )}
-                          >
-                            <div className="flex items-center gap-4">
-                              <div
-                                className={cn(
-                                  "flex h-6 w-6 items-center justify-center rounded border-2 transition-all",
-                                  selectedAddons.includes(addon.id)
-                                    ? "border-orange-500 bg-orange-500"
-                                    : "border-orange-300 bg-white"
-                                )}
-                              >
-                                {selectedAddons.includes(addon.id) && (
-                                  <svg
-                                    className="h-4 w-4 text-white"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                  >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={3}
-                                      d="M5 13l4 4L19 7"
-                                    />
-                                  </svg>
-                                )}
+                      <div className="space-y-2.5">
+                        {productDetails.addons.map((addon) => {
+                          const isSelected = selectedAddons.includes(addon.id);
+                          return (
+                            <button
+                              key={addon.id}
+                              onClick={() => handleToggleAddon(addon.id)}
+                              className={cn(
+                                "flex w-full items-center justify-between rounded-xl border-2 px-5 py-4 transition-all",
+                                isSelected
+                                  ? "border-amber-500 bg-gradient-to-r from-amber-50 to-white"
+                                  : "border-amber-200/60 bg-white hover:border-amber-300 hover:bg-amber-50/50"
+                              )}
+                            >
+                              <div className="flex items-center gap-4">
+                                <div
+                                  className={cn(
+                                    "flex h-6 w-6 items-center justify-center rounded-md border-2 transition-all",
+                                    isSelected
+                                      ? "border-amber-500 bg-amber-500"
+                                      : "border-amber-300 bg-white"
+                                  )}
+                                >
+                                  {isSelected && (
+                                    <Check className="h-4 w-4 text-white" />
+                                  )}
+                                </div>
+                                <span className="font-body text-base font-medium text-neutral-800">
+                                  {addon.name}
+                                </span>
                               </div>
-                              <span className="text-lg font-semibold text-neutral-900">
-                                {addon.name}
+                              <span className="font-body text-base font-semibold text-amber-600">
+                                +{addon.price.toLocaleString()}₮
                               </span>
-                            </div>
-                            <span className="text-lg font-bold text-orange-500">
-                              +{addon.price.toLocaleString()}₮
-                            </span>
-                          </button>
-                        ))}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
                 </>
               ) : null}
 
-              <div className="mb-8">
-                <h3 className="mb-4 text-xl font-bold text-neutral-900">
+              {/* Quantity */}
+              <div className="mb-6">
+                <h3 className="mb-3 font-body text-lg font-semibold text-neutral-800">
                   Quantity
                 </h3>
                 <div className="flex items-center gap-4">
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-14 w-14 rounded-full border-2 border-orange-300 bg-white hover:bg-orange-50"
+                  <button
                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-amber-200 bg-white text-neutral-600 transition-all hover:border-amber-300 hover:bg-amber-50"
                   >
-                    <Minus className="h-6 w-6" />
-                  </Button>
-                  <span className="w-16 text-center text-3xl font-bold text-neutral-900">
+                    <Minus className="h-5 w-5" />
+                  </button>
+                  <span className="w-12 text-center font-display text-2xl font-semibold text-neutral-800">
                     {quantity}
                   </span>
-                  <Button
-                    size="icon"
-                    variant="outline"
-                    className="h-14 w-14 rounded-full border-2 border-orange-300 bg-white hover:bg-orange-50"
+                  <button
                     onClick={() => setQuantity(quantity + 1)}
+                    className="flex h-12 w-12 items-center justify-center rounded-xl border-2 border-amber-200 bg-white text-neutral-600 transition-all hover:border-amber-300 hover:bg-amber-50"
                   >
-                    <Plus className="h-6 w-6" />
-                  </Button>
+                    <Plus className="h-5 w-5" />
+                  </button>
                 </div>
               </div>
 
+              {/* Add to Cart Button */}
               <Button
-                className="mb-8 h-20 w-full rounded-2xl border-2 border-orange-500 bg-orange-500 text-2xl font-bold text-white shadow-sm hover:bg-orange-600"
+                className="mb-6 h-16 w-full gap-3 rounded-2xl bg-gradient-to-r from-amber-500 to-amber-600 font-body text-xl font-semibold text-white shadow-lg transition-all hover:shadow-xl disabled:from-neutral-300 disabled:to-neutral-400"
                 onClick={handleAddToCart}
                 disabled={loading}
               >
-                {loading
-                  ? "Loading..."
-                  : `ADD TO CART — ${totalPrice.toLocaleString()}₮`}
+                {loading ? (
+                  "Loading..."
+                ) : (
+                  <>
+                    <ShoppingCart className="h-6 w-6" />
+                    Add to Cart — {totalPrice.toLocaleString()}₮
+                  </>
+                )}
               </Button>
             </div>
           </div>

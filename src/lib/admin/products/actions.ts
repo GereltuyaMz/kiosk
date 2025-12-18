@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { productSchema, type ProductInput } from "./schemas";
-import type { Product } from "./types";
+import type { Product, ProductWithDetails } from "./types";
 import { verifyAuthOrThrow, handleError, type ActionResult } from "@/lib/admin/utils";
 import { deleteProductImage } from "@/lib/storage/actions";
 
@@ -52,6 +52,67 @@ export const getProduct = async (id: string): Promise<ActionResult<Product>> => 
     return { success: true, data: product };
   } catch (error) {
     return { success: false, error: handleError(error, "Failed to fetch product") };
+  }
+};
+
+export const getProductWithDetails = async (
+  id: string
+): Promise<ActionResult<ProductWithDetails>> => {
+  try {
+    const { tenantId } = await verifyAuthOrThrow();
+    const supabase = await createClient();
+
+    const { data: product, error: productError } = await supabase
+      .from("products")
+      .select(`
+        *,
+        category:categories(id, name)
+      `)
+      .eq("id", id)
+      .eq("tenant_id", tenantId)
+      .single();
+
+    if (productError || !product) {
+      return { success: false, error: "Product not found" };
+    }
+
+    const { data: variants, error: variantsError } = await supabase
+      .from("product_variants")
+      .select(`
+        id,
+        name,
+        is_required,
+        sort_order,
+        options:variant_options(
+          id,
+          name,
+          price_modifier,
+          sort_order
+        )
+      `)
+      .eq("product_id", id)
+      .order("sort_order", { ascending: true });
+
+    const { data: addons, error: addonsError } = await supabase
+      .from("product_addons")
+      .select("id, name, price, sort_order")
+      .eq("product_id", id)
+      .order("sort_order", { ascending: true });
+
+    if (variantsError || addonsError) {
+      throw new Error("Failed to fetch product details");
+    }
+
+    return {
+      success: true,
+      data: {
+        product,
+        variants: variants || [],
+        addons: addons || [],
+      },
+    };
+  } catch (error) {
+    return { success: false, error: handleError(error, "Failed to fetch product details") };
   }
 };
 
